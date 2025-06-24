@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model";
+import { sendMail } from "../config/mail";
 
 const generateToken = (userId: string, username: string) => {
     return jwt.sign({ userId, username }, process.env.JWT_SECRET, {
@@ -61,6 +62,34 @@ export const login = async (req: Request, res: Response) => {
             },
             token
         });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error });
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const token = jwt.sign(
+            { userId: user._id },
+            process.env.PASSWORD_RESET_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        await sendMail(
+            "Forgot Password",
+            `<p><a href="${resetLink}">Click to reset your password</a></p>`,
+            email
+        );
+
+        return res.status(200).json({ message: "Email sending is succesful" });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error });
     }
