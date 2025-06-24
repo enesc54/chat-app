@@ -1,26 +1,21 @@
 import express from "express";
 import cors from "cors";
-import http from "http";
 import dotenv from "dotenv";
-import { Server } from "socket.io";
+import http from "http";
+import { connectDB } from "./config/db";
+import { setupSocket } from "./config/socket";
+import authRouter from "./routes/auth.routes";
 
 dotenv.config();
+connectDB();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/api/auth", authRouter);
 
 const server = http.createServer(app);
-
-const io = new Server(server, {});
-
-io.on("connection", socket => {
-    console.log("New user connected: ", socket.id);
-
-    socket.on("disconnet", () => {
-        console.log("User disconneted: ", socket.id);
-    });
-});
+const io = setupSocket(server);
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
