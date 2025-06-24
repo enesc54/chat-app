@@ -77,7 +77,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
         }
 
         const token = jwt.sign(
-            { userId: user._id },
+            { userId: user._id, email: user.email },
             process.env.PASSWORD_RESET_SECRET,
             { expiresIn: "1h" }
         );
@@ -90,6 +90,39 @@ export const forgotPassword = async (req: Request, res: Response) => {
         );
 
         return res.status(200).json({ message: "Email sending is succesful" });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { resetToken } = req.query;
+        const { newPassword } = req.body;
+
+        const decoded = jwt.verify(
+            resetToken,
+            process.env.PASSWORD_RESET_SECRET
+        );
+
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+        await user.save();
+
+        const token = generateToken(user._id.toString(), user.username);
+
+        return res.status(201).json({
+            user: {
+                userId: user._id,
+                username: user.username,
+                email: user.email
+            },
+            token
+        });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error });
     }
