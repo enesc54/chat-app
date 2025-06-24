@@ -6,9 +6,10 @@ import App from "./App.tsx";
 import Login from "./pages/authentication/Login.tsx";
 import Register from "./pages/authentication/Register.tsx";
 import ForgotPassword from "./pages/authentication/ForgotPassword.tsx";
+import ResetPassword from "./pages/authentication/ResetPassword.tsx";
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <Login />
+        <ResetPassword />
     </StrictMode>
 );
