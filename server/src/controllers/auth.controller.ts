@@ -12,7 +12,7 @@ const generateToken = (userId: string, username: string) => {
 
 export const register = async (req: Request, res: Response) => {
     try {
-        const { username, email, password } = req.body;
+        const { fullname, username, email, password } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -21,7 +21,12 @@ export const register = async (req: Request, res: Response) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ username, email, password: hashedPassword });
+        const newUser = new User({
+            fullname,
+            username,
+            email,
+            password: hashedPassword
+        });
         await newUser.save();
 
         const token = generateToken(newUser._id.toString(), newUser.username);
@@ -45,7 +50,7 @@ export const login = async (req: Request, res: Response) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({ message: "Invalid credential1s" });
+            return res.status(401).json({ message: "Invalid credentials" });
         }
 
         if (!(await bcrypt.compare(password, user.password))) {
@@ -90,6 +95,39 @@ export const forgotPassword = async (req: Request, res: Response) => {
         );
 
         return res.status(200).json({ message: "Email sending is succesful" });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error });
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { resetToken } = req.query;
+        const { newPassword } = req.body;
+
+        const decoded = jwt.verify(
+            resetToken,
+            process.env.PASSWORD_RESET_SECRET
+        );
+
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+
+        await user.save();
+
+        const token = generateToken(user._id.toString(), user.username);
+
+        return res.status(201).json({
+            user: {
+                userId: user._id,
+                username: user.username,
+                email: user.email
+            },
+            token
+        });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error });
     }
