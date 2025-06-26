@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function ResetPassword() {
     const { resetToken } = useParams();
@@ -23,15 +24,16 @@ function ResetPassword() {
 
                 if (res.status === 201) {
                     localStorage.setItem("token", data.token);
+                    toast.success("Password reset successful");
                     navigate("/chats");
                 } else {
-                    alert(data.message);
+                    toast.error(data.message);
                 }
             } else {
-                alert("The passwords entered do not match.");
+                toast.error("The passwords entered do not match.");
             }
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
         }
     };
     return (

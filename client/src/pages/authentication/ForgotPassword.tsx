@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function ForgotPassword() {
     const [email, setEmail] = useState();
@@ -14,9 +15,9 @@ function ForgotPassword() {
                 }
             );
             const data = await res.json();
-            alert(data.message);
+            toast.success(data.message);
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
         }
     };
     return (

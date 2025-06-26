@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Register() {
     const [fullname, setFullname] = useState();
@@ -11,7 +12,6 @@ function Register() {
 
     const registerButtonOnclick = async () => {
         try {
-            alert(fullname);
             const res = await fetch("http://localhost:3000/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -26,12 +26,13 @@ function Register() {
             const data = await res.json();
             if (res.status === 201) {
                 localStorage.setItem("token", data.token);
+                toast.success("Registration successful");
                 navigate("/chats");
             } else {
-                alert(data.message);
+                toast.error(data.message);
             }
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
         }
     };
 

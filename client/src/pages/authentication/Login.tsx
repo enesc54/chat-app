@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Login() {
     const [email, setEmail] = useState();
@@ -17,12 +18,13 @@ function Login() {
             const data = await res.json();
             if (res.status === 201) {
                 localStorage.setItem("token", data.token);
+                toast.success("Login successful!");
                 navigate("/chats");
             } else {
-                alert(data.message);
+                toast.error(data.message);
             }
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
         }
     };
     return (
