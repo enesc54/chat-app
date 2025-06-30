@@ -1,9 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
 import Login from "./pages/authentication/Login.tsx";
 import Register from "./pages/authentication/Register.tsx";
 import ForgotPassword from "./pages/authentication/ForgotPassword.tsx";
 import ResetPassword from "./pages/authentication/ResetPassword.tsx";
-import { ToastContainer } from "react-toastify";
+
+import Chats from "./pages/chats";
 
 function App() {
     return (
@@ -21,6 +24,7 @@ function App() {
                         path="/reset-password/:resetToken"
                         element={<ResetPassword />}
                     />
+                    <Route path="/chats" element={<Chats />} />
                 </Routes>
             </Router>
             <ToastContainer
