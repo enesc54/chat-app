@@ -14,3 +14,8 @@ export interface ISendMessagePayload {
         data: string;
     };
 }
+
+export interface IGetRoomMessagesPayload {
+    userId: string;
+    roomId: string;
+}

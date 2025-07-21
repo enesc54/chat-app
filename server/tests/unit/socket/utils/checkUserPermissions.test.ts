@@ -1,11 +1,14 @@
-import { checkUserPermissions } from "../../../src/socket/utils/checkUserPermissions";
-import { ErrorCodes, ErrorMessages } from "../../../src/types/response.types";
-import * as responseUtils from "../../../src/utils/response";
-import { Room } from "../../../src/models/room.model";
-import { Server } from "../../../src/models/server.model";
+import { checkUserPermissions } from "../../../../src/socket/utils/checkUserPermissions";
+import {
+    ErrorCodes,
+    ErrorMessages
+} from "../../../../src/types/response.types";
+import * as responseUtils from "../../../../src/utils/response";
+import { Room } from "../../../../src/models/room.model";
+import { Server } from "../../../../src/models/server.model";
 import mongoose from "mongoose";
 
-jest.mock("../../../src/utils/response", () => ({
+jest.mock("../../../../src/utils/response", () => ({
     createErrorResponse: jest.fn(code => ({
         success: false,
         error: {
@@ -15,13 +18,13 @@ jest.mock("../../../src/utils/response", () => ({
     }))
 }));
 
-jest.mock("../../../src/models/room.model", () => ({
+jest.mock("../../../../src/models/room.model", () => ({
     Room: {
         findById: jest.fn()
     }
 }));
 
-jest.mock("../../../src/models/server.model", () => ({
+jest.mock("../../../../src/models/server.model", () => ({
     Server: {
         findOne: jest.fn()
     }

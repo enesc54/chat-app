@@ -1,16 +1,18 @@
-import { createServer, Server as HttpServer } from "http";
+import { Server as HttpServer } from "http";
 import { Server as IOServer } from "socket.io";
-import { io as Client, Socket as ClientSocket } from "socket.io-client";
-import { AddressInfo } from "net";
-
-import { handleSendMessage } from "../../../../src/socket/handlers/messages/sendMessage.handler";
-import { handleJoinRoom } from "../../../../src/socket/handlers/messages/joinRoom.handler";
-import { checkUserPermissions } from "../../../../src/socket/utils/checkUserPermissions";
+import { Socket as ClientSocket } from "socket.io-client";
+import { handleSendMessage } from "../../../../../src/socket/handlers/messages/sendMessage.handler";
+import { handleJoinRoom } from "../../../../../src/socket/handlers/messages/joinRoom.handler";
+import { checkUserPermissions } from "../../../../../src/socket/utils/checkUserPermissions";
 import {
     ErrorCodes,
     ErrorMessages
-} from "../../../../src/types/response.types";
-import { Message } from "../../../../src/models/message.model";
+} from "../../../../../src/types/response.types";
+import { Message } from "../../../../../src/models/message.model";
+import {
+    setupTestServer,
+    teardownTestServer
+} from "../../../../utils/socketTestUtils";
 
 const mockSave = jest.fn().mockResolvedValue({
     _id: "message1",
@@ -22,14 +24,15 @@ const mockSave = jest.fn().mockResolvedValue({
 
 const mockMessageInstance = { save: mockSave };
 
-jest.mock("../../../../src/models/message.model", () => ({
+jest.mock("../../../../../src/models/message.model", () => ({
     Message: jest.fn(() => mockMessageInstance)
 }));
-jest.mock("../../../../src/socket/utils/checkUserPermissions");
+jest.mock("../../../../../src/socket/utils/checkUserPermissions");
 
 describe("send_message event", () => {
     let io: IOServer;
     let httpServer: HttpServer;
+    let clients: ClientSocket[];
     let senderClient: ClientSocket;
     let receiverClient: ClientSocket;
 
@@ -44,36 +47,22 @@ describe("send_message event", () => {
 
     const mockedCheckUserPermissions = checkUserPermissions as jest.Mock;
 
-    beforeAll(done => {
-        httpServer = createServer();
-        io = new IOServer(httpServer);
-
-        io.on("connection", socket => {
+    beforeAll(async () => {
+        const setupServer = await setupTestServer((io, socket) => {
             handleJoinRoom(socket);
             handleSendMessage(io, socket);
-        });
+        }, 2);
 
-        httpServer.listen(() => {
-            const port = (httpServer.address() as AddressInfo).port;
-            senderClient = Client(`http://localhost:${port}`);
-            receiverClient = Client(`http://localhost:${port}`);
+        io = setupServer.io;
+        httpServer = setupServer.httpServer;
+        clients = setupServer.clients;
 
-            let connected = 0;
-            const checkDone = () => {
-                connected++;
-                if (connected === 2) done();
-            };
-
-            senderClient.on("connect", checkDone);
-            receiverClient.on("connect", checkDone);
-        });
+        senderClient = clients[0];
+        receiverClient = clients[1];
     });
 
     afterAll(async () => {
-        await io.close();
-        await senderClient.close();
-        await receiverClient.close();
-        httpServer.close();
+        await teardownTestServer(io, httpServer, clients);
     });
 
     beforeEach(() => {

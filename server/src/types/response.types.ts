@@ -1,4 +1,5 @@
 import { IRoomPermissions } from "./room.types";
+import { IMessage } from "../models/message.model";
 
 export enum ErrorCodes {
     INVALID_PAYLOAD = "INVALID_PAYLOAD",
@@ -28,6 +29,11 @@ export const ErrorMessages: Record<ErrorCodes, string> = {
 export interface IJoinRoomSuccessResponse {
     roomId: string;
     permissions: IRoomPermissions;
+}
+
+export interface IGetRoomMessagesResponse {
+    roomId: string;
+    messages: IMessage[];
 }
 
 export interface IApiResponse<T = undefined> {

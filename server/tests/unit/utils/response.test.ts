@@ -1,5 +1,5 @@
-import { createErrorResponse } from "../../src/utils/response";
-import { ErrorCodes, ErrorMessages } from "../../src/types/response.types";
+import { createErrorResponse } from "../../../src/utils/response";
+import { ErrorCodes, ErrorMessages } from "../../../src/types/response.types";
 
 describe("createErrorResponse", () => {
     it("should create correct error response for each error code", () => {

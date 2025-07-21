@@ -1,42 +1,41 @@
-import { createServer, Server as HttpServer } from "http";
+import { Server as HttpServer } from "http";
 import { Server as IOServer } from "socket.io";
-import { io as Client, Socket as ClientSocket } from "socket.io-client";
-import { AddressInfo } from "net";
-import { handleJoinRoom } from "../../../../src/socket/handlers/messages/joinRoom.handler";
-import { checkUserPermissions } from "../../../../src/socket/utils/checkUserPermissions";
+import { Socket as ClientSocket } from "socket.io-client";
+import { handleJoinRoom } from "../../../../../src/socket/handlers/messages/joinRoom.handler";
+import { checkUserPermissions } from "../../../../../src/socket/utils/checkUserPermissions";
 import {
     ErrorCodes,
     ErrorMessages
-} from "../../../../src/types/response.types";
+} from "../../../../../src/types/response.types";
+import {
+    setupTestServer,
+    teardownTestServer
+} from "../../../../utils/socketTestUtils";
 
-jest.mock("../../../../src/socket/utils/checkUserPermissions");
+jest.mock("../../../../../src/socket/utils/checkUserPermissions");
 
 describe("join_room event", () => {
     let io: IOServer;
     let httpServer: HttpServer;
+    let clients: ClientSocket[];
     let clientSocket: ClientSocket;
 
     const mockedCheckUserPermissions = checkUserPermissions as jest.Mock;
 
-    beforeAll(done => {
-        httpServer = createServer();
-        io = new IOServer(httpServer);
-
-        io.on("connection", socket => {
+    beforeAll(async () => {
+        const setupServer = await setupTestServer((io, socket) => {
             handleJoinRoom(socket);
-        });
+        }, 1);
 
-        httpServer.listen(() => {
-            const port = (httpServer.address() as AddressInfo).port;
-            clientSocket = Client(`http://localhost:${port}`);
-            clientSocket.on("connect", done);
-        });
+        io = setupServer.io;
+        httpServer = setupServer.httpServer;
+        clients = setupServer.clients;
+
+        clientSocket = clients[0];
     });
 
     afterAll(async () => {
-        await io.close();
-        await clientSocket.close();
-        httpServer.close();
+        await teardownTestServer(io, httpServer, clients);
     });
 
     beforeEach(() => {
