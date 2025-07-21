@@ -12,6 +12,8 @@ import {
     teardownTestServer
 } from "../../../../utils/socketTestUtils";
 import { Message } from "../../../../../src/models/message.model";
+import { IApiResponse } from "../../../../../src/types/response.types";
+import { IMessage } from "../../../../../src/models/message.model";
 
 jest.mock("../../../../../src/models/message.model", () => {
     const mockSort = jest.fn().mockResolvedValue([
@@ -77,14 +79,18 @@ describe("get_room_messages event", () => {
             }
         });
 
-        clientSocket.emit("get_room_messages", payloadData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
-            done();
-        });
+        clientSocket.emit(
+            "get_room_messages",
+            payloadData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
+                done();
+            }
+        );
     });
 
     it("should return error if permissions.canAccess is false", done => {
@@ -92,15 +98,19 @@ describe("get_room_messages event", () => {
             success: true,
             data: { permissions: { canAccess: false } }
         });
-        clientSocket.emit("get_room_messages", payloadData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
+        clientSocket.emit(
+            "get_room_messages",
+            payloadData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
 
-            done();
-        });
+                done();
+            }
+        );
     });
 
     it("should return success and room messages", done => {
@@ -109,24 +119,36 @@ describe("get_room_messages event", () => {
             data: { permissions: { canAccess: true } }
         });
 
-        clientSocket.emit("get_room_messages", payloadData, response => {
-            const timestamps = response.data.messages.map(m =>
-                new Date(m.createdAt).getTime()
-            );
-            const isSortedAsc = timestamps.every(
-                (t, i, arr) => i === 0 || arr[i - 1] <= t
-            );
+        clientSocket.emit(
+            "get_room_messages",
+            payloadData,
+            (response: IApiResponse<{ messages: IMessage[] }>) => {
+                const timestamps =
+                    response.data?.messages.map(m =>
+                        new Date(m.createdAt).getTime()
+                    ) ?? [];
+                expect(timestamps.length).toBeGreaterThan(0);
 
-            expect(response.success).toBe(true);
-            expect(response.data.messages).toHaveLength(2);
-            expect(response.data.messages[0].content.data).toBe("Message 1");
-            expect(response.data.messages[1].content.data).toBe("Message 2");
-            expect(Message.find).toHaveBeenCalledWith({
-                roomId: "room1"
-            });
-            expect(isSortedAsc).toBe(true);
-            done();
-        });
+                const isSortedAsc = timestamps.every(
+                    (t, i, arr) => i === 0 || arr[i - 1] <= t
+                );
+                expect(isSortedAsc).toBe(true);
+
+                expect(response.success).toBe(true);
+                expect(response.data?.messages).toHaveLength(2);
+                expect(response.data?.messages[0].content.data).toBe(
+                    "Message 1"
+                );
+                expect(response.data?.messages[1].content.data).toBe(
+                    "Message 2"
+                );
+                expect(Message.find).toHaveBeenCalledWith({
+                    roomId: "room1"
+                });
+
+                done();
+            }
+        );
     });
 
     it("should return API_ERROR if exception thrown", done => {
@@ -134,13 +156,17 @@ describe("get_room_messages event", () => {
             throw new Error("Unexpected Error");
         });
 
-        clientSocket.emit("get_room_messages", payloadData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.API_ERROR);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.API_ERROR]
-            );
-            done();
-        });
+        clientSocket.emit(
+            "get_room_messages",
+            payloadData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.API_ERROR);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.API_ERROR]
+                );
+                done();
+            }
+        );
     });
 });

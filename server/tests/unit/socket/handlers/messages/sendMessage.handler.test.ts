@@ -13,6 +13,7 @@ import {
     setupTestServer,
     teardownTestServer
 } from "../../../../utils/socketTestUtils";
+import { IApiResponse } from "../../../../../src/types/response.types";
 
 const mockSave = jest.fn().mockResolvedValue({
     _id: "message1",
@@ -78,14 +79,18 @@ describe("send_message event", () => {
             }
         });
 
-        senderClient.emit("send_message", messageData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
-            done();
-        });
+        senderClient.emit(
+            "send_message",
+            messageData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
+                done();
+            }
+        );
     });
 
     it("should return error if permissions.canAccess is false", done => {
@@ -94,14 +99,18 @@ describe("send_message event", () => {
             data: { permissions: { roleId: "role1", canAccess: false } }
         });
 
-        senderClient.emit("send_message", messageData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
-            done();
-        });
+        senderClient.emit(
+            "send_message",
+            messageData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
+                done();
+            }
+        );
     });
 
     it("should return error if permissions.canSendMessage is false", done => {
@@ -116,14 +125,18 @@ describe("send_message event", () => {
             }
         });
 
-        senderClient.emit("send_message", messageData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
-            done();
-        });
+        senderClient.emit(
+            "send_message",
+            messageData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
+                done();
+            }
+        );
     });
 
     it("should emit message and return success", done => {
@@ -141,12 +154,12 @@ describe("send_message event", () => {
         receiverClient.emit(
             "join_room",
             { roomId: "room1" },
-            receiverJoinResponse => {
+            (receiverJoinResponse: IApiResponse) => {
                 expect(receiverJoinResponse.success).toBe(true);
                 senderClient.emit(
                     "join_room",
                     { roomId: "room1" },
-                    senderJoinResponse => {
+                    (senderJoinResponse: IApiResponse) => {
                         expect(senderJoinResponse.success).toBe(true);
                         receiverClient.on("receive_message", message => {
                             expect(message.senderId).toBe("user1");
@@ -162,7 +175,7 @@ describe("send_message event", () => {
                         senderClient.emit(
                             "send_message",
                             messageData,
-                            response => {
+                            (response: IApiResponse) => {
                                 expect(response.success).toBe(true);
                             }
                         );
@@ -177,13 +190,17 @@ describe("send_message event", () => {
             throw new Error("Unexpected Error");
         });
 
-        senderClient.emit("send_message", messageData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.API_ERROR);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.API_ERROR]
-            );
-            done();
-        });
+        senderClient.emit(
+            "send_message",
+            messageData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.API_ERROR);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.API_ERROR]
+                );
+                done();
+            }
+        );
     });
 });

@@ -1,11 +1,12 @@
-import { Server } from "socket.io";
+import { Server as HttpServer } from "http";
+import { Server as IOServer } from "socket.io";
 import handleMessageEvents from "../socket/handlers/message.handler";
 import { createErrorResponse } from "../utils/response";
 import { ErrorCodes } from "../types/response.types";
 import jwt from "jsonwebtoken";
 
-export const setupSocket = server => {
-    const io = new Server(server, {
+export const setupSocket = (server: HttpServer) => {
+    const io = new IOServer(server, {
         cors: {
             origin: "*",
             methods: ["GET", "POST"]

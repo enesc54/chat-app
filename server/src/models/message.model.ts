@@ -10,6 +10,8 @@ export interface IMessage extends Document {
     roomId: Types.ObjectId;
     senderId: Types.ObjectId;
     content: IMessageContent;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const contentSchema = new Schema<IMessageContent>({

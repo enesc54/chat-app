@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../models/user.model";
 import { sendMail } from "../config/mail";
 
 const generateToken = (userId: string, username: string) => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined");
+    }
     return jwt.sign({ userId, username }, process.env.JWT_SECRET, {
         expiresIn: "7d"
     });
@@ -81,6 +84,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "User not found" });
         }
 
+        if (!process.env.PASSWORD_RESET_SECRET) {
+            throw new Error("PASSWORD_RESET_SECRET is not defined");
+        }
+
         const token = jwt.sign(
             { userId: user._id },
             process.env.PASSWORD_RESET_SECRET,
@@ -102,13 +109,29 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
 export const resetPassword = async (req: Request, res: Response) => {
     try {
-        const { resetToken } = req.query;
+        let resetToken = req.query.resetToken;
+
+        if (Array.isArray(resetToken)) {
+            resetToken = resetToken[0];
+        }
+
+        if (typeof resetToken !== "string") {
+            throw new Error("resetToken is not defined");
+        }
         const { newPassword } = req.body;
+
+        if (!process.env.PASSWORD_RESET_SECRET) {
+            throw new Error("PASSWORD_RESET_SECRET is not defined");
+        }
 
         const decoded = jwt.verify(
             resetToken,
             process.env.PASSWORD_RESET_SECRET
         );
+
+        if (!(typeof decoded === "object" && "userId" in decoded)) {
+            throw new Error("Invalid token payload");
+        }
 
         const user = await User.findById(decoded.userId);
         if (!user) return res.status(404).json({ message: "User not found" });

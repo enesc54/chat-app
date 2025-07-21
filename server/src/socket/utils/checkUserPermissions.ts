@@ -18,7 +18,7 @@ export async function checkUserPermissions({
     userId,
     roomId
 }: ICheckUserPermissionsInput): Promise<
-    IApiResponse<{ permissions: IRoomPermissions }>
+    IApiResponse<{ permissions: IRoomPermissions } | undefined>
 > {
     if (!userId || !roomId)
         return createErrorResponse(ErrorCodes.INVALID_PAYLOAD);

@@ -11,6 +11,8 @@ import {
     setupTestServer,
     teardownTestServer
 } from "../../../../utils/socketTestUtils";
+import { IApiResponse } from "../../../../../src/types/response.types";
+import { IJoinRoomSuccessResponse } from "../../../../../src/types/response.types";
 
 jest.mock("../../../../../src/socket/utils/checkUserPermissions");
 
@@ -53,14 +55,18 @@ describe("join_room event", () => {
             }
         });
 
-        clientSocket.emit("join_room", payloadData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
-            done();
-        });
+        clientSocket.emit(
+            "join_room",
+            payloadData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
+                done();
+            }
+        );
     });
 
     it("should return error if permissions.canAccess is false", done => {
@@ -69,14 +75,18 @@ describe("join_room event", () => {
             data: { permissions: { roleId: "role1", canAccess: false } }
         });
 
-        clientSocket.emit("join_room", payloadData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.FORBIDDEN]
-            );
-            done();
-        });
+        clientSocket.emit(
+            "join_room",
+            payloadData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.FORBIDDEN);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.FORBIDDEN]
+                );
+                done();
+            }
+        );
     });
 
     it("should join room and return success when permissions allow", done => {
@@ -85,15 +95,19 @@ describe("join_room event", () => {
             data: { permissions: { roleId: "role1", canAccess: true } }
         });
 
-        clientSocket.emit("join_room", payloadData, response => {
-            expect(response.success).toBe(true);
-            expect(response.data?.roomId).toBe("room1");
-            expect(response.data?.permissions).toEqual({
-                roleId: "role1",
-                canAccess: true
-            });
-            done();
-        });
+        clientSocket.emit(
+            "join_room",
+            payloadData,
+            (response: IApiResponse<IJoinRoomSuccessResponse>) => {
+                expect(response.success).toBe(true);
+                expect(response.data?.roomId).toBe("room1");
+                expect(response.data?.permissions).toEqual({
+                    roleId: "role1",
+                    canAccess: true
+                });
+                done();
+            }
+        );
     });
 
     it("should return API_ERROR if exception thrown", done => {
@@ -101,13 +115,17 @@ describe("join_room event", () => {
             throw new Error("Unexpected Error");
         });
 
-        clientSocket.emit("join_room", payloadData, response => {
-            expect(response.success).toBe(false);
-            expect(response.error?.code).toBe(ErrorCodes.API_ERROR);
-            expect(response.error?.message).toBe(
-                ErrorMessages[ErrorCodes.API_ERROR]
-            );
-            done();
-        });
+        clientSocket.emit(
+            "join_room",
+            payloadData,
+            (response: IApiResponse) => {
+                expect(response.success).toBe(false);
+                expect(response.error?.code).toBe(ErrorCodes.API_ERROR);
+                expect(response.error?.message).toBe(
+                    ErrorMessages[ErrorCodes.API_ERROR]
+                );
+                done();
+            }
+        );
     });
 });

@@ -9,7 +9,7 @@ import { Server } from "../../../../src/models/server.model";
 import mongoose from "mongoose";
 
 jest.mock("../../../../src/utils/response", () => ({
-    createErrorResponse: jest.fn(code => ({
+    createErrorResponse: jest.fn((code: ErrorCodes) => ({
         success: false,
         error: {
             message: ErrorMessages[code],
