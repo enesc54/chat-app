@@ -8,7 +8,6 @@ export enum MessageContentType {
 
 export interface ISendMessagePayload {
     roomId: string;
-    senderId: string;
     content: {
         type: MessageContentType;
         data: string;
@@ -16,6 +15,5 @@ export interface ISendMessagePayload {
 }
 
 export interface IGetRoomMessagesPayload {
-    userId: string;
     roomId: string;
 }

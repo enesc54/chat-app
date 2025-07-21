@@ -15,6 +15,18 @@ export async function setupTestServer(
         const httpServer = createServer();
         const io = new IOServer(httpServer);
 
+        io.use((socket, next) => {
+            try {
+                const tokenString = socket.handshake.auth?.token;
+                const mockUser = JSON.parse(tokenString);
+
+                socket.data.user = mockUser;
+                next();
+            } catch (error) {
+                return next(new Error("INVALID_AUTH"));
+            }
+        });
+
         io.on("connection", socket => {
             handlers(io, socket);
         });
@@ -25,7 +37,13 @@ export async function setupTestServer(
             const clients: ClientSocket[] = [];
             let connected = 0;
             for (let i = 0; i < clientCount; i++) {
-                const clientSocket = Client(`http://localhost:${port}`);
+                const clientSocket = Client(`http://localhost:${port}`, {
+                    auth: {
+                        token: JSON.stringify({
+                            userId: `user${i + 1}`
+                        })
+                    }
+                });
                 clientSocket.on("connect", () => {
                     connected++;
                     if (connected === clientCount)

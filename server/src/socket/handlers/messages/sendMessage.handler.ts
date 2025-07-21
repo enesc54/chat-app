@@ -11,7 +11,8 @@ import { checkUserPermissions } from "../../utils/checkUserPermissions";
 export function handleSendMessage(io: Server, socket: Socket) {
     socket.on("send_message", async (data: ISendMessagePayload, callback) => {
         try {
-            const { roomId, senderId, content } = data;
+            const senderId = socket.data.user.userId;
+            const { roomId, content } = data;
 
             const permissionsCheckResult = await checkUserPermissions({
                 userId: senderId,

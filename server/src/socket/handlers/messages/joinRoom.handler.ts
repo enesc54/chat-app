@@ -6,11 +6,13 @@ import {
     IJoinRoomSuccessResponse
 } from "../../../types/response.types";
 import { checkUserPermissions } from "../../utils/checkUserPermissions";
+import { IJoinRoomPayload } from "../../../types/room.types";
 
 export function handleJoinRoom(socket: Socket) {
-    socket.on("join_room", async (data, callback) => {
+    socket.on("join_room", async (data: IJoinRoomPayload, callback) => {
         try {
-            const { userId, roomId } = data;
+            const userId = socket.data.user.userId;
+            const { roomId } = data;
 
             const permissionsCheckResult = await checkUserPermissions({
                 userId,

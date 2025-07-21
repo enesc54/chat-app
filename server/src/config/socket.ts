@@ -1,11 +1,31 @@
 import { Server } from "socket.io";
 import handleMessageEvents from "../socket/handlers/message.handler";
+import { createErrorResponse } from "../utils/response";
+import { ErrorCodes } from "../types/response.types";
+import jwt from "jsonwebtoken";
 
 export const setupSocket = server => {
     const io = new Server(server, {
         cors: {
             origin: "*",
             methods: ["GET", "POST"]
+        }
+    });
+
+    io.use((socket, next) => {
+        const tokenWithBearer = socket.handshake.auth?.token;
+        if (!tokenWithBearer) {
+            return next(new Error("AUTH_TOKEN_MISSING"));
+        }
+
+        const token = tokenWithBearer.replace("Bearer ", "");
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+            socket.data.user = decoded;
+            next();
+        } catch (err) {
+            return next(new Error("AUTH_TOKEN_INVALID"));
         }
     });
 

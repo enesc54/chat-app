@@ -14,7 +14,8 @@ export function handleGetRoomMessages(socket: Socket) {
         "get_room_messages",
         async (data: IGetRoomMessagesPayload, callback) => {
             try {
-                const { userId, roomId } = data;
+                const userId = socket.data.user.userId;
+                const { roomId } = data;
 
                 const permissionsCheckResult = await checkUserPermissions({
                     userId,

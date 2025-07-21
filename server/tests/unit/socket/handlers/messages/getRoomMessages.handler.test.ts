@@ -47,7 +47,6 @@ describe("get_room_messages event", () => {
     let clientSocket: ClientSocket;
 
     const payloadData = {
-        userId: "user1",
         roomId: "room1"
     };
 

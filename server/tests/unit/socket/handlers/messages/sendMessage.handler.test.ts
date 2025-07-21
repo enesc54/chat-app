@@ -16,8 +16,8 @@ import {
 
 const mockSave = jest.fn().mockResolvedValue({
     _id: "message1",
-    senderId: "user1",
     roomId: "room1",
+    senderId: "user1",
     content: { type: "text", data: "Message Content" },
     createdAt: new Date()
 });
@@ -37,7 +37,6 @@ describe("send_message event", () => {
     let receiverClient: ClientSocket;
 
     const messageData = {
-        senderId: "user1",
         roomId: "room1",
         content: {
             type: "text",
@@ -141,12 +140,12 @@ describe("send_message event", () => {
 
         receiverClient.emit(
             "join_room",
-            { userId: "user2", roomId: "room1" },
+            { roomId: "room1" },
             receiverJoinResponse => {
                 expect(receiverJoinResponse.success).toBe(true);
                 senderClient.emit(
                     "join_room",
-                    { userId: "user1", roomId: "room1" },
+                    { roomId: "room1" },
                     senderJoinResponse => {
                         expect(senderJoinResponse.success).toBe(true);
                         receiverClient.on("receive_message", message => {
