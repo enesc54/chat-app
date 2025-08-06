@@ -5,8 +5,9 @@ import {
 } from "react-icons/md";
 import { HiHashtag } from "react-icons/hi";
 import { useState } from "react";
+import ToggleItem from "./ToggleItem";
 
-function CategoryToggle() {
+function CategoryToggle({ categoryData }) {
     const [isVisible, setIsVisible] = useState(true);
     return (
         <div className="text-white mb-2">
@@ -16,7 +17,7 @@ function CategoryToggle() {
                 }}
                 className="flex w-full justify-between items-center "
             >
-                <div className="font-bold text-sm">Title</div>
+                <div className="font-bold text-sm">{categoryData.name}</div>
                 {isVisible ? (
                     <MdOutlineKeyboardArrowDown className="h-full w-6" />
                 ) : (
@@ -25,14 +26,9 @@ function CategoryToggle() {
             </div>
             {isVisible && (
                 <div>
-                    <div className="flex items-center p-0.5 hover:bg-[#25252544] rounded">
-                        <HiHashtag />
-                        <div className="ml-2 ">Channel Name</div>
-                    </div>
-                    <div className="flex items-center p-0.5 hover:bg-[#25252544] rounded">
-                        <MdOutlineVolumeUp />
-                        <div className="ml-2">Channel Name</div>
-                    </div>
+                    {categoryData.rooms.map(room => (
+                        <ToggleItem roomData={room} />
+                    ))}
                 </div>
             )}
         </div>
