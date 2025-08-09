@@ -6,6 +6,7 @@ import cors from "cors";
 import { connectDB } from "./config/db";
 import { setupSocket } from "./config/socket";
 import authRouter from "./routes/auth.routes";
+import chatsRouter from "./routes/chats.routes";
 
 connectDB();
 
@@ -13,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRouter);
+app.use("/api/chats", chatsRouter);
 
 const server = http.createServer(app);
 const io = setupSocket(server);
