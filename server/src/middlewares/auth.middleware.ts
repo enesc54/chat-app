@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-interface AuthPayload {
-    userId: string;
-    iat: number;
-    exp: number;
+export interface CustomRequest extends Request {
+    user?:
+        | {
+              userId: string;
+              username: string;
+          }
+        | JwtPayload;
 }
 
 export const verifyToken = (
@@ -21,11 +24,17 @@ export const verifyToken = (
     const token = authHeader.split(" ")[1];
 
     try {
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET is not defined");
+        }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = {
-            userId: decoded.userId,
-            username: decoded.username
-        };
+
+        if (typeof decoded === "string") {
+            throw new Error("Token payload cannot be string");
+        }
+        (req as CustomRequest).user = decoded;
+
         next();
     } catch (err) {
         return res
