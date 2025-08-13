@@ -1,29 +1,22 @@
 import { MdOutlineAddBox } from "react-icons/md";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
+import { getServers } from "../../services/http/chatService";
+import { toast } from "react-toastify";
 
 function ServerListView() {
     const { currentServer, setCurrentServer } = useContext(ChatContext);
-    const [servers, setServers] = useState([
-        {
-            _id: "server1",
-            name: "First Server",
-            logo: "https://www.pngitem.com/pimgs/m/87-877270_logo-icon-profile-png-transparent-png.png",
-            banner: "/login_background.jpg"
-        },
-        {
-            _id: "server2",
-            name: "Second Server",
-            logo: "https://www.pngitem.com/pimgs/m/87-877270_logo-icon-profile-png-transparent-png.png",
-            banner: "/login_background.jpg"
-        },
-        {
-            _id: "server3",
-            name: "First Server",
-            logo: "https://www.pngitem.com/pimgs/m/87-877270_logo-icon-profile-png-transparent-png.png",
-            banner: "/login_background.jpg"
-        }
-    ]);
+    const [servers, setServers] = useState([]);
+
+    useEffect(() => {
+        getServers().then(res => {
+            if (!res.success) {
+                return toast.error(res.error.message);
+            }
+            setServers(res.data);
+        });
+    }, []);
+
     return (
         <>
             {/*Servers*/}

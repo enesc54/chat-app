@@ -7,8 +7,12 @@ import { HiHashtag } from "react-icons/hi";
 import { useState } from "react";
 import ToggleItem from "./ToggleItem";
 
-function CategoryToggle({ categoryData }) {
+function CategoryToggle({ categoryId, categoryRooms }) {
     const [isVisible, setIsVisible] = useState(true);
+    const [categoryData, setCategoryData] = useState({
+        _id: categoryId,
+        name: "Category"
+    });
     return (
         <div className="text-white mb-2">
             <div
@@ -26,7 +30,7 @@ function CategoryToggle({ categoryData }) {
             </div>
             {isVisible && (
                 <div>
-                    {categoryData.rooms.map(room => (
+                    {categoryRooms.map(room => (
                         <ToggleItem roomData={room} />
                     ))}
                 </div>

@@ -1,14 +1,17 @@
 import { createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
     const navigate = useNavigate();
+    const { serverId, roomId } = useParams();
 
     const [showMobileMenu, setShowMobileMenu] = useState(true);
-    const [currentServer, setCurrentServer] = useState();
-    const [currentRoom, setCurrentRoom] = useState();
+    const [currentServer, setCurrentServer] = useState({ _id: serverId });
+    const [currentRoom, setCurrentRoom] = useState({ _id: roomId });
+
+    //TODO: get server and room data
 
     useEffect(() => {
         if (currentServer?._id && currentRoom?._id) {
