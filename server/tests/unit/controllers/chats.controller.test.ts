@@ -109,3 +109,47 @@ describe("get rooms event", () => {
         expect(res.body.success).toBe(true);
     });
 });
+
+describe("get categories event", () => {
+    it("should return 400 if serverId is invalid or categories data is not in the server", async () => {
+        mockedVerifyToken.mockImplementation((req, _res, next) => {
+            req.user = { userId: "507f1f77bcf86cd799439011" };
+            next();
+        });
+
+        const res = await request(app).get("/api/chats/getRooms/invalid_id");
+
+        expect(res.status).toBe(400);
+        expect(res.body.error.code).toBe(ErrorCodes.SERVER_NOT_FOUND);
+    });
+
+    it("should return categories if serverId is not invalid", async () => {
+        (ServerModel.findOne as jest.Mock).mockResolvedValue({
+            _id: "507f1f77bcf86cd799439011",
+            categories: [
+                {
+                    _id: "test_category_1",
+                    name: "Test Category 1",
+                    position: 1
+                },
+                {
+                    _id: "test_category_2",
+                    name: "Test Category 2",
+                    position: 2
+                }
+            ]
+        });
+
+        mockedVerifyToken.mockImplementation((req, _res, next) => {
+            req.user = { userId: "507f1f77bcf86cd799439011" };
+            next();
+        });
+
+        const res = await request(app).get(
+            "/api/chats/getCategories/507f1f77bcf86cd799439011"
+        );
+
+        expect(res.status).toBe(200);
+        expect(res.body.success).toBe(true);
+    });
+});
