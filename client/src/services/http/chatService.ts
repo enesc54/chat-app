@@ -5,3 +5,7 @@ export const getServers = async () =>
 
 export const getRooms = async serverId =>
     await get(`/chats/getRooms/${serverId}`, { auth: true });
+
+export const getCategories = async serverId => 
+    await get(`/chats/getCategories/${serverId}`, { auth: true });
+;

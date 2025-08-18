@@ -10,6 +10,7 @@ import { IJoinRoomPayload } from "../../../types/room.types";
 
 export function handleJoinRoom(socket: Socket) {
     socket.on("join_room", async (data: IJoinRoomPayload, callback) => {
+      console.log("aaaaaaaaaaaaaaaa")
         try {
             const userId = socket.data.user.userId;
             const { roomId } = data;

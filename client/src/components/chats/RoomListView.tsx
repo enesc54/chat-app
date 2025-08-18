@@ -5,33 +5,38 @@ import { getRooms } from "../../services/http/chatService";
 import { toast } from "react-toastify";
 
 function RoomListView() {
-    const { currentServer } = useContext(ChatContext);
-    const [rooms, setRooms] = useState({});
+    const { currentServer, categories, setCategories, setRooms } =
+        useContext(ChatContext);
+    const [roomsGroupedByCategories, setRoomsGroupedByCategories] = useState(
+        []
+    );
 
     useEffect(() => {
-        getRooms(currentServer?._id).then(res => {
-            if (!res.success) {
-                return toast.error(res.error.message);
-            }
-            const grouped = res.data.reduce((acc, item) => {
-                if (!acc[item.categoryId]) {
-                    acc[item.categoryId] = [];
+        if (currentServer._id) {
+            getRooms(currentServer?._id).then(res => {
+                if (!res.success) {
+                    return toast.error(res.error.message);
                 }
-                acc[item.categoryId].push(item);
-                return acc;
-            }, {});
 
-            setRooms(grouped);
-        });
-    }, [currentServer?._id]);
+                const groupedRooms = categories.map(category => {
+                    return {
+                        ...category,
+                        rooms: res.data.filter(
+                            room => room.categoryId == category._id
+                        )
+                    };
+                });
+
+                setRooms(res.data);
+                setRoomsGroupedByCategories(groupedRooms);
+            });
+        }
+    }, [currentServer, categories]);
 
     return (
         <div className="bg-[#252525dd] h-full rounded-lg p-6 overflow-y-auto scrollbar-hide">
-            {Object.entries(rooms).map(([categoryId, categoryRooms]) => (
-                <CategoryToggle
-                    categoryId={categoryId}
-                    categoryRooms={categoryRooms}
-                />
+            {roomsGroupedByCategories.map(category => (
+                <CategoryToggle categoryData={category} />
             ))}
         </div>
     );

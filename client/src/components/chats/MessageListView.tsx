@@ -1,18 +1,31 @@
 import MessageView from "./MessageView";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
+import {
+    getRoomMessages,
+    receiveMessage
+} from "../../services/socket/chatSocket";
+import { ChatContext } from "../../context/ChatContext";
+import { toast } from "react-toastify";
 
 function MessageListView() {
     const messageListRef = useRef(null);
-    const [messages, setMessages] = useState([
-        {
-            senderId: "user1",
-            senderName: "Sender 1",
-            content: {
-                type: "text",
-                data: "First Message"
+    const [messages, setMessages] = useState([]);
+    const { currentRoom } = useContext(ChatContext);
+
+    useEffect(() => {
+        getRoomMessages(currentRoom._id, res => {
+            if (!res.success) {
+                return toast.error(res.error.message);
             }
-        }
-    ]);
+            setMessages(res.data.messages);
+        });
+    }, [currentRoom]);
+
+    useEffect(() => {
+        receiveMessage(msg => {
+            setMessages(prev => [...prev, msg]);
+        });
+    }, []);
 
     useEffect(() => {
         const container = messageListRef.current;
