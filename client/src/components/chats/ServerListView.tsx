@@ -5,18 +5,8 @@ import { getServers } from "../../services/http/chatService";
 import { toast } from "react-toastify";
 
 function ServerListView() {
-    const { currentServer, setCurrentServer } = useContext(ChatContext);
-    const [servers, setServers] = useState([]);
-
-    useEffect(() => {
-        getServers().then(res => {
-            if (!res.success) {
-                return toast.error(res.error.message);
-            }
-            setServers(res.data);
-        });
-    }, []);
-
+    const { servers, currentServer, setCurrentServer } =
+        useContext(ChatContext);
     return (
         <>
             {/*Servers*/}

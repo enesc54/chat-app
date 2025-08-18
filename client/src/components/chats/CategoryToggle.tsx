@@ -4,15 +4,13 @@ import {
     MdOutlineVolumeUp
 } from "react-icons/md";
 import { HiHashtag } from "react-icons/hi";
-import { useState } from "react";
 import ToggleItem from "./ToggleItem";
+import { useState } from "react";
 
-function CategoryToggle({ categoryId, categoryRooms }) {
+function CategoryToggle({ categoryData }) {
     const [isVisible, setIsVisible] = useState(true);
-    const [categoryData, setCategoryData] = useState({
-        _id: categoryId,
-        name: "Category"
-    });
+    const categoryRooms = categoryData.rooms;
+
     return (
         <div className="text-white mb-2">
             <div
@@ -30,9 +28,7 @@ function CategoryToggle({ categoryId, categoryRooms }) {
             </div>
             {isVisible && (
                 <div>
-                    {categoryRooms.map(room => (
-                        <ToggleItem roomData={room} />
-                    ))}
+                    {categoryRooms?.map(room => <ToggleItem roomData={room} />)}
                 </div>
             )}
         </div>
