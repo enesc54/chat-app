@@ -4,9 +4,10 @@ import { sendMessage } from "../../services/socket/chatSocket";
 import { useState, useContext } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import { toast } from "react-toastify";
+import { PopUpType } from "../../layouts/chats";
 
 function SendMessageView() {
-    const { currentRoom } = useContext(ChatContext);
+    const { currentRoom, setCurrentPopUp } = useContext(ChatContext);
     const [message, setMessage] = useState("");
 
     const handleChange = e => {
@@ -28,7 +29,12 @@ function SendMessageView() {
 
     return (
         <div className="bg-[#252525dd] mt-2 h-20 rounded-lg p-4 flex items-center">
-            <MdOutlineAddBox className="w-12 h-12 my-1 text-white" />
+            <MdOutlineAddBox
+                className="w-12 h-12 my-1 text-white"
+                onClick={() => {
+                    setCurrentPopUp(PopUpType.FILE_SEND);
+                }}
+            />
             <textarea
                 value={message}
                 onChange={handleChange}

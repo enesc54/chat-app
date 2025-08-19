@@ -2,6 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getServers, getCategories } from "../services/http/chatService";
 import { toast } from "react-toastify";
+import { PopUpType } from "../layouts/chats";
 
 const ChatContext = createContext();
 
@@ -15,8 +16,9 @@ const ChatProvider = ({ children }) => {
     const [servers, setServers] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [categories, setCategories] = useState([]);
-
-    //TODO: get server and room data
+    const [currentPopUp, setCurrentPopUp] = useState<PopUpType>(
+        PopUpType.CLOSED
+    );
 
     useEffect(() => {
         getServers().then(res => {
@@ -70,7 +72,9 @@ const ChatProvider = ({ children }) => {
                 currentRoom,
                 setCurrentRoom,
                 showMobileMenu,
-                setShowMobileMenu
+                setShowMobileMenu,
+                currentPopUp,
+                setCurrentPopUp
             }}
         >
             {children}
