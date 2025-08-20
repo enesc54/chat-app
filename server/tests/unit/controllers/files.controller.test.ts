@@ -22,7 +22,12 @@ const mockFileInstance = {
 };
 
 jest.mock("../../../src/models/file.model", () => ({
-    File: jest.fn(() => mockFileInstance)
+    File: Object.assign(
+        jest.fn(() => mockFileInstance),
+        {
+            findOne: jest.fn()
+        }
+    )
 }));
 jest.mock("../../../src/middlewares/auth.middleware");
 jest.mock("../../../src/config/supabase", () => {
@@ -106,5 +111,35 @@ describe("uploadFile event", () => {
         expect(res.body.data.url).toBe(
             "https://supabase.fake/files/uuid-file.jpg"
         );
+    });
+});
+
+describe("getFileInfo", () => {
+    it("should return 400 if fileId is invalid", async () => {
+        const res = await request(app).get("/api/files/invalid-id");
+
+        expect(res.status).toBe(400);
+        expect(res.body.error.code).toBe(ErrorCodes.FILE_NOT_FOUND);
+    });
+    it("should return 400 if file not exists in db", async () => {
+        const res = await request(app).get(
+            "/api/files/507f1f77bcf86cd799439011"
+        );
+
+        expect(res.status).toBe(400);
+        expect(res.body.error.code).toBe(ErrorCodes.FILE_NOT_FOUND);
+    });
+    it("should return file info if file exists in db", async () => {
+        (FileModel.findOne as jest.Mock).mockResolvedValueOnce({
+            _id: "507f1f77bcf86cd799439011",
+            name: "test-file-name"
+        });
+
+        const res = await request(app).get(
+            "/api/files/507f1f77bcf86cd799439011"
+        );
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.name).toBe("test-file-name");
     });
 });
