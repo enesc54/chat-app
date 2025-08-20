@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CustomRequest } from "../middlewares/auth.middleware";
+import { CustomRequest } from "../types/request.types";
 import { IRoom, Room } from "../models/room.model";
 import {
     IServer,

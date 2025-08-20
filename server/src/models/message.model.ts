@@ -4,6 +4,7 @@ import { MessageContentType } from "../types/message.types";
 export interface IMessageContent {
     type: MessageContentType;
     data: string;
+    fileId?: Types.ObjectId;
 }
 
 export interface IMessage extends Document {
@@ -20,7 +21,9 @@ const contentSchema = new Schema<IMessageContent>({
         enum: Object.values(MessageContentType),
         required: true
     },
-    data: { type: String, required: true }
+    data: { type: String, required: true },
+    fileId: {type: Schema.Types.ObjectId,ref: "File"
+    }
 });
 
 const messageSchema = new Schema<IMessage>(
