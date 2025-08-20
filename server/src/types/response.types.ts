@@ -10,7 +10,8 @@ export enum ErrorCodes {
     USER_NOT_FOUND = "USER_NOT_FOUND",
     PERMISSION_NOT_FOUND = "PERMISSION_NOT_FOUND",
     ROLE_NOT_FOUND = "ROLE_NOT_FOUND",
-    API_ERROR = "API_ERROR"
+    API_ERROR = "API_ERROR",
+    FILE_NOT_UPLOADED = "FILE_NOT_UPLOADED"
 }
 
 export const ErrorMessages: Record<ErrorCodes, string> = {
@@ -23,7 +24,8 @@ export const ErrorMessages: Record<ErrorCodes, string> = {
     [ErrorCodes.USER_NOT_FOUND]: "User does not exist.",
     [ErrorCodes.PERMISSION_NOT_FOUND]: "No permissions set for your role.",
     [ErrorCodes.ROLE_NOT_FOUND]: "User role not found.",
-    [ErrorCodes.API_ERROR]: "An unexpected error occurred."
+    [ErrorCodes.API_ERROR]: "An unexpected error occurred.",
+    [ErrorCodes.FILE_NOT_UPLOADED]: "File could not be uploaded"
 };
 
 export interface IJoinRoomSuccessResponse {

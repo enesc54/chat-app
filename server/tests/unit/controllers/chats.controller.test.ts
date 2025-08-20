@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config({ path: ".env" });
-
 import request from "supertest";
 import express, { Express } from "express";
 import chatsRouter from "../../../src/routes/chats.routes";
