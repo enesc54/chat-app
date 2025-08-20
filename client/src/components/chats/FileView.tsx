@@ -1,7 +1,7 @@
 import { CiFileOn } from "react-icons/ci";
 import { useState } from "react";
 
-function FileView() {
+function FileView({ fileId, fileUrl }) {
     const [file, setFile] = useState({
         _id: "fileId",
         fileName: "File Name",
@@ -11,7 +11,7 @@ function FileView() {
     });
 
     const handleDownload = () => {
-        window.open(`http://localhost:3000/download/${file._id}`);
+        window.open(`${fileUrl}`);
     };
 
     const formatFileSize = size => {

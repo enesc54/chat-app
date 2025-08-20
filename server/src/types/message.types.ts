@@ -2,7 +2,7 @@ export enum MessageContentType {
     Text = "text",
     Image = "image",
     Video = "video",
-    Audio = "Audio",
+    Audio = "audio",
     File = "file"
 }
 

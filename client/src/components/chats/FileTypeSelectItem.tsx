@@ -44,7 +44,7 @@ export enum FileTypeSelectItemType {
     FILE = "file"
 }
 
-const FileTypeSelectItem = ({ type, setSelectedFile }) => {
+const FileTypeSelectItem = ({ type, setSelectedFile, setSelectedFileType }) => {
     const fileInputRef = useRef(null);
 
     const handleClick = () => {
@@ -55,6 +55,7 @@ const FileTypeSelectItem = ({ type, setSelectedFile }) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
             setSelectedFile(selectedFile);
+            setSelectedFileType(type)
         }
     };
     return (

@@ -1,13 +1,47 @@
 import FileTypeSelectItem, {
     FileTypeSelectItemType
 } from "./FileTypeSelectItem";
-import { useState, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
+import { ChatContext } from "../../context/ChatContext";
+import { PopUpType } from "../../layouts/chats";
+
 import { FiUpload } from "react-icons/fi";
 import { IoSend } from "react-icons/io5";
+import { toast } from "react-toastify";
+
+import { uploadFile } from "../../services/http/fileService";
+import { sendMessage } from "../../services/socket/chatSocket";
 
 function FileSendPopUp() {
+    const { currentRoom , setCurrentPopUp} = useContext(ChatContext);
+
     const [isFileSelected, setIsFileSelected] = useState(false);
     const [selectedFile, setSelectedFile] = useState();
+    const [selectedFileType, setSelectedFileType] = useState();
+
+    const handleSendClick = async () => {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const res = await uploadFile(formData);
+        if (!res.success) {
+            return toast.error(res.error.message);
+        }
+
+        const messageContent = {
+            type: selectedFileType,
+            data: res.data.url,
+            fileId: res.data._id
+        };
+        
+        sendMessage(currentRoom._id,messageContent,(response)=>{
+          if (!response.success) {
+            return toast.error(response.error.message);
+        }
+        
+        setCurrentPopUp(PopUpType.CLOSED)
+        })
+    };
 
     useEffect(() => {
         if (selectedFile) {
@@ -29,7 +63,10 @@ function FileSendPopUp() {
                         <FiUpload className="w-16 h-16" />
                         File Name:{selectedFile.name}
                     </div>
-                    <div className="flex gap-4 items-center text-xl bg-[#007BFFdd] hover:bg-[#0056b3dd] p-4 rounded-lg">
+                    <div
+                        onClick={handleSendClick}
+                        className="flex gap-4 items-center text-xl bg-[#007BFFdd] hover:bg-[#0056b3dd] p-4 rounded-lg"
+                    >
                         Send <IoSend />
                     </div>
                 </>
@@ -37,18 +74,22 @@ function FileSendPopUp() {
                 <>
                     <FileTypeSelectItem
                         type={FileTypeSelectItemType.FILE}
+                        setSelectedFileType={setSelectedFileType}
                         setSelectedFile={setSelectedFile}
                     />
                     <FileTypeSelectItem
                         type={FileTypeSelectItemType.AUDIO}
+                        setSelectedFileType={setSelectedFileType}
                         setSelectedFile={setSelectedFile}
                     />
                     <FileTypeSelectItem
                         type={FileTypeSelectItemType.IMAGE}
+                        setSelectedFileType={setSelectedFileType}
                         setSelectedFile={setSelectedFile}
                     />
                     <FileTypeSelectItem
                         type={FileTypeSelectItemType.VIDEO}
+                        setSelectedFileType={setSelectedFileType}
                         setSelectedFile={setSelectedFile}
                     />
                 </>

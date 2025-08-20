@@ -2,7 +2,7 @@ import { LuAudioLines } from "react-icons/lu";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { useRef, useState } from "react";
 
-function AudioPlayerView() {
+function AudioPlayerView({ fileId, fileUrl }) {
     const audioRef = useRef(null);
     const progressBarRef = useRef(null);
 
@@ -76,7 +76,7 @@ function AudioPlayerView() {
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleLoadedMetadata}
                 onEnded={() => setIsPlaying(!isPlaying)}
-                src={file.fileUrl}
+                src={fileUrl}
             />
             <div className="flex gap-2 items-center">
                 {isPlaying ? (

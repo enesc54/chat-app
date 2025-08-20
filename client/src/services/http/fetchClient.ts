@@ -1,16 +1,23 @@
 const BASE_URL = "http://localhost:3000/api";
-const request = async (url, { auth = false, ...options } = {}) => {
+const request = async (url, { auth = false, body, ...options } = {}) => {
     const headers = {
-        "Content-Type": "application/json",
         ...options.headers
     };
+
+    if (!(body instanceof FormData)) {
+        headers["Content-Type"] = "application/json";
+        if (body) {
+            body = JSON.stringify(body);
+        }
+    }
 
     if (auth) {
         headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
     }
     const response = await fetch(`${BASE_URL}${url}`, {
         ...options,
-        headers
+        headers,
+        body
     });
 
     const responseData = await response.json();
@@ -25,9 +32,10 @@ export const get = async (path, { auth = false } = {}) => {
     });
 };
 
-export const post = (path, data, { auth = false } = {}) =>
-    request(path, {
+export const post = async (path, data, { auth = false } = {}) => {
+    return await request(path, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: data,
         auth
     });
+};

@@ -7,6 +7,7 @@ import {
     ErrorCodes
 } from "../types/response.types";
 import { v4 as uuidv4 } from "uuid";
+import path from "path";
 import { File as FileModel, IFile } from "../models/file.model";
 
 export const uploadFile = async (req: CustomRequest, res: Response) => {
@@ -22,7 +23,9 @@ export const uploadFile = async (req: CustomRequest, res: Response) => {
 
     const file = req.file;
 
-    const uniqueFileName = `${uuidv4()}-${file.originalname}`;
+    const fileExt = path.extname(file.originalname);
+
+    const uniqueFileName = `${uuidv4()}${fileExt}`;
 
     const { data: uploadData, error: uploadError } = await supabase.storage
         .from("files")

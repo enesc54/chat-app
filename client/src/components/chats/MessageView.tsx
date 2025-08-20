@@ -21,16 +21,28 @@ function MessageView({ message }) {
                 <div className="pl-10 text-white">{message.content.data}</div>
             )}
             {message.content.type === "image" && (
-                <ImageView fileId={message.content.data} />
+                <ImageView
+                    fileId={message.content.fileId}
+                    fileUrl={message.content.data}
+                />
             )}
             {message.content.type === "video" && (
-                <VideoPlayerView fileId={message.content.data} />
+                <VideoPlayerView
+                    fileId={message.content.fileId}
+                    fileUrl={message.content.data}
+                />
             )}
             {message.content.type === "file" && (
-                <FileView fileId={message.content.data} />
+                <FileView
+                    fileId={message.content.fileId}
+                    fileUrl={message.content.data}
+                />
             )}
             {message.content.type === "audio" && (
-                <AudioPlayerView fileId={message.content.data} />
+                <AudioPlayerView
+                    fileId={message.content.fileId}
+                    fileUrl={message.content.data}
+                />
             )}
         </div>
     );

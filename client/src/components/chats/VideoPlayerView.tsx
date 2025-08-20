@@ -5,7 +5,7 @@ import {
 } from "react-icons/tb";
 import { useRef, useState } from "react";
 
-function VideoPlayerView({ fileId }) {
+function VideoPlayerView({ fileId,fileUrl }) {
     const videoRef = useRef(null);
     const progressBarRef = useRef(null);
 
@@ -83,7 +83,7 @@ function VideoPlayerView({ fileId }) {
         <div className="relative ml-10 max-w-sm rounded-lg overflow-hidden group">
             <video
                 ref={videoRef}
-                src={file.fileUrl}
+                src={fileUrl}
                 width="100%"
                 height="100%"
                 onTimeUpdate={handleTimeUpdate}
