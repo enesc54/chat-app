@@ -8,12 +8,14 @@ import LeftMenu from "@components/chats/LeftMenu";
 import { useState, useContext } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import FileSendPopUp from "@components/chats/FileSendPopUp";
-import JoinServerPopUp from "@components/chats/CreateServerPopUp";
+import CreateServerPopUp from "@components/chats/CreateServerPopUp";
+import JoinServerPopUp from "@components/chats/JoinServerPopUp";
 
 export enum PopUpType {
     CLOSED = "CLOSED",
     FILE_SEND = "FILE_UPLOAD",
-    CREATE_SERVER = "CREATE_SERVER"
+    CREATE_SERVER = "CREATE_SERVER",
+    JOIN_SERVER = "JOIN_SERVER"
 }
 
 function ChatPageLayout() {
@@ -24,6 +26,8 @@ function ChatPageLayout() {
             case PopUpType.FILE_SEND:
                 return <FileSendPopUp />;
             case PopUpType.CREATE_SERVER:
+                return <CreateServerPopUp />;
+            case PopUpType.JOIN_SERVER:
                 return <JoinServerPopUp />;
             default:
                 return null;
@@ -45,7 +49,7 @@ function ChatPageLayout() {
                     currentPopUp === PopUpType.CLOSED ? "hidden" : ""
                 }`}
             >
-                <div className="max-w-[95%] lg:max-w-[80%] min-w-[80%] lg:min-w-[30%] min-h-[30%] max-h-[80%] bg-[#252525dd] rounded-xl p-4 overflow-auto flex justify-center">
+                <div className="max-w-[95%] lg:max-w-[80%] min-w-[80%] lg:min-w-[30%] max-h-[80%] bg-[#252525dd] rounded-xl p-4 overflow-auto flex justify-center">
                     {currentPopUp !== PopUpType.CLOSED && getPopUpView()}
                 </div>
             </div>

@@ -1,10 +1,14 @@
 import ServerTemplateSelectItem, {
     ServerTemplateTypes
 } from "./ServerTemplateSelectItem";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { TbUpload } from "react-icons/tb";
+import { PopUpType } from "../../layouts/chats";
+import { ChatContext } from "../../context/ChatContext";
 
 function CreateServerPopUp() {
+    const { setCurrentPopUp } = useContext(ChatContext);
+
     const [selectedType, setSelectedType] = useState<ServerTemplateTypes>();
     const [logoPreview, setLogoPreview] = useState(null);
     const [bannerPreview, setBannerPreview] = useState(null);
@@ -67,7 +71,12 @@ function CreateServerPopUp() {
                         type={ServerTemplateTypes.WORKING}
                     />
 
-                    <div className="shrink-0 bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center">
+                    <div
+                        onClick={() => {
+                            setCurrentPopUp(PopUpType.JOIN_SERVER);
+                        }}
+                        className="shrink-0 bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center"
+                    >
                         Bir Server'a Katıl
                     </div>
                 </>
