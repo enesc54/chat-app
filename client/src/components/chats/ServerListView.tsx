@@ -2,11 +2,16 @@ import { MdOutlineAddBox } from "react-icons/md";
 import { useState, useContext, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import { getServers } from "../../services/http/chatService";
+import { PopUpType } from "../../layouts/chats";
 import { toast } from "react-toastify";
 
 function ServerListView() {
-    const { servers, currentServer, setCurrentServer } =
+    const { servers, currentServer, setCurrentServer,setCurrentPopUp} =
         useContext(ChatContext);
+        
+        const joinServerClick = ()=>{
+          setCurrentPopUp(PopUpType.CREATE_SERVER)
+        }
     return (
         <>
             {/*Servers*/}
@@ -28,7 +33,7 @@ function ServerListView() {
                 </div>
             </div>
             {/*Add Server Button*/}
-            <div className="flex items-center justify-center bg-[#252525dd] mt-2 h-20 rounded-lg">
+            <div onClick={joinServerClick} className="flex items-center justify-center bg-[#252525dd] mt-2 h-20 rounded-lg">
                 <MdOutlineAddBox className="w-12 h-12 rounded-lg my-1 text-white" />
             </div>
         </>
