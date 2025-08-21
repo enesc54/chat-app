@@ -10,14 +10,6 @@ function AudioPlayerView({ fileId, fileUrl }) {
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
 
-    const [file, setFile] = useState({
-        _id: "fileId",
-        fileName: "file name",
-        fileType: "audio",
-        fileUrl: "fileUrl",
-        fileSize: 16384
-    });
-
     const togglePlay = () => {
         const audio = audioRef.current;
         if (!audio) return;

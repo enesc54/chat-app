@@ -51,8 +51,10 @@ export const uploadFile = async (req: CustomRequest, res: Response) => {
         .getPublicUrl(uniqueFileName);
     const publicUrl = publicUrlData.publicUrl;
 
+    const fixedName = Buffer.from(file.originalname, "latin1").toString("utf8");
+
     const dbFile = new FileModel({
-        name: file.originalname,
+        name: fixedName,
         url: publicUrl,
         size: file.size,
         uploaded_by: req.user.userId,
@@ -93,8 +95,6 @@ export const getFileInfo = async (req: Request, res: Response) => {
                 }
             });
         }
-
-    
 
         const response: IApiResponse<IFile> = {
             success: true,
