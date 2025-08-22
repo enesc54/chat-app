@@ -7,7 +7,32 @@ import { ErrorCodes, ErrorMessages } from "../../../src/types/response.types";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { verifyToken } from "../../../src/middlewares/auth.middleware";
 
-jest.mock("../../../src/models/server.model");
+const saveMock = jest.fn().mockResolvedValue({
+    _id: "507f1f77bcf86cd799439011",
+    name: "Test Server",
+    logo: "test-logo-url",
+    banner: "test-banner-url",
+    toObject: () => ({
+        _id: "507f1f77bcf86cd799439011",
+        name: "Test Server",
+        logo: "test-logo-url",
+        banner: "test-banner-url"
+    })
+});
+
+const mockServerInstance = {
+    save: saveMock
+};
+
+jest.mock("../../../src/models/server.model", () => ({
+    Server: Object.assign(
+        jest.fn(() => mockServerInstance),
+        {
+            find: jest.fn(),
+            findOne: jest.fn()
+        }
+    )
+}));
 jest.mock("../../../src/models/room.model");
 jest.mock("../../../src/middlewares/auth.middleware");
 
@@ -145,6 +170,67 @@ describe("get categories event", () => {
         const res = await request(app).get(
             "/api/chats/getCategories/507f1f77bcf86cd799439011"
         );
+
+        expect(res.status).toBe(200);
+        expect(res.body.success).toBe(true);
+    });
+});
+
+describe("create server event", () => {
+    beforeAll(() => {
+        mockedVerifyToken.mockImplementation((req, _res, next) => {
+            req.user = { userId: "507f1f77bcf86cd799439011" };
+            next();
+        });
+    });
+
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    it("should return 400 if template is invalid", async () => {
+        const res = await request(app).post("/api/chats/createServer").send({
+            template: "invalid_template"
+        });
+
+        expect(res.status).toBe(400);
+        expect(res.body.success).toBe(false);
+        expect(res.body.error.code).toBe(ErrorCodes.INVALID_PAYLOAD);
+    });
+    it("should return 400 if rooms are not saved", async () => {
+        (Room.insertMany as jest.Mock).mockRejectedValue(
+            new Error("Room are not saved")
+        );
+        const res = await request(app).post("/api/chats/createServer").send({
+            template: "NOT_USING",
+            serverName: "Test Server",
+            serverDescription: "Test Server Description",
+            logoUrl: "test-logo-url",
+            bannerUrl: "test-banner-url"
+        });
+
+        expect(res.status).toBe(500);
+        expect(res.body.success).toBe(false);
+        expect(res.body.error.code).toBe(ErrorCodes.API_ERROR);
+    });
+    it("should return server and rooms if server creation is success", async () => {
+        (Room.insertMany as jest.Mock).mockResolvedValue([
+            {
+                _id: "test-room-1",
+                type: "text",
+                name: "general chat",
+                serverId: "test_server_id",
+                categoryId: "test-text-category",
+                permission: []
+            }
+        ]);
+        const res = await request(app).post("/api/chats/createServer").send({
+            template: "NOT_USING",
+            serverName: "Test Server",
+            serverDescription: "Test Server Description",
+            logoUrl: "test-logo-url",
+            bannerUrl: "test-banner-url"
+        });
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);

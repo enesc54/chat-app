@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface ICategory {
-    _id: Types.ObjectId;
+    _id?: Types.ObjectId;
     name: string;
     position: number;
 }
 
 export interface IServerRole {
-    _id: Types.ObjectId;
+    _id?: Types.ObjectId;
     name: string;
 }
 
@@ -21,6 +21,7 @@ export interface IServer extends Document {
     logo?: string;
     banner?: string;
     categories?: ICategory[];
+    description?: string;
     owner: Types.ObjectId;
     members: IServerMember[];
     roles: IServerRole[];
@@ -31,6 +32,7 @@ const serverSchema = new Schema<IServer>(
         name: { type: String, required: true },
         logo: { type: String },
         banner: { type: String },
+        description: { type: String },
         owner: {
             type: Schema.Types.ObjectId,
             ref: "User",

@@ -8,3 +8,17 @@ export interface IRoomPermissions {
     canSendMessage?: boolean;
     canSpeak?: boolean;
 }
+
+export type PermKey =
+    | "admin:text"
+    | "admin:voice"
+    | "everyone:text"
+    | "everyone:voice"
+    |'everyone:readOnly'
+    | "everyone:blocked"
+
+export interface IRoomTemplate {
+    name: string;
+    type: "text" | "voice";
+    perms: PermKey[];
+}
