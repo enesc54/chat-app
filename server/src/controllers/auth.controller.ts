@@ -83,7 +83,7 @@ export const login = async (req: Request, res: Response) => {
                 success: false,
                 error: {
                     code: ErrorCodes.INVALID_CREDENTIALS,
-                    message: ErrorMessages[ErrorCodes.USER_NOT_FOUND]
+                    message: ErrorMessages[ErrorCodes.INVALID_CREDENTIALS]
                 }
             });
         }
