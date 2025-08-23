@@ -33,13 +33,16 @@ const options = {
     }
 };
 
-function ServerTemplateSelectItem({ type , setSelectedType}) {
-  const handleClick=()=>{
-    setSelectedType(type)
-  }
-  
+function ServerTemplateSelectItem({ type, setSelectedTemplate }) {
+    const handleClick = () => {
+        setSelectedTemplate(type);
+    };
+
     return (
-        <div onClick={handleClick} className="h-24 bg-[#252525] flex items-center shadow-lg p-8 rounded-xl gap-8 text-2xl font-bold mb-6">
+        <div
+            onClick={handleClick}
+            className="h-24 bg-[#252525] flex items-center shadow-lg p-8 rounded-xl gap-8 text-2xl font-bold mb-6"
+        >
             {options[type].icon}
             {options[type].text}
         </div>

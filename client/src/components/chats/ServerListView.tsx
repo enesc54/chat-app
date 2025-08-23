@@ -22,7 +22,7 @@ function ServerListView() {
                             key={server._id}
                             src={server.logo}
                             alt={server.name}
-                            className={`aspect-square w-full bg-red-400 rounded-lg my-1 hover:scale-110 ${
+                            className={`aspect-square object-cover w-full bg-red-400 rounded-lg my-1 hover:scale-110 ${
                                 server._id === currentServer?._id && "scale-110"
                             }`}
                             onClick={() => {

@@ -343,7 +343,7 @@ export const createServer = async (req: CustomRequest, res: Response) => {
         ],
         [ServerTemplateTypes.WORKING]: [
             {
-                name: "general",
+                name: "general chat",
                 type: "text",
                 perms: ["admin:text", "everyone:text"]
             },

@@ -5,11 +5,15 @@ import { useState, useRef, useContext } from "react";
 import { TbUpload } from "react-icons/tb";
 import { PopUpType } from "../../layouts/chats";
 import { ChatContext } from "../../context/ChatContext";
+import { uploadFile } from "../../services/http/fileService";
+import { createServer } from "../../services/http/chatService";
+import { toast } from "react-toastify";
 
 function CreateServerPopUp() {
-    const { setCurrentPopUp } = useContext(ChatContext);
+    const { setCurrentPopUp, setServers } = useContext(ChatContext);
 
-    const [selectedType, setSelectedType] = useState<ServerTemplateTypes>();
+    const [selectedTemplate, setSelectedTemplate] =
+        useState<ServerTemplateTypes>();
     const [logoPreview, setLogoPreview] = useState(null);
     const [bannerPreview, setBannerPreview] = useState(null);
     const [logoFile, setLogoFile] = useState();
@@ -44,9 +48,52 @@ function CreateServerPopUp() {
         }
     };
 
+    const getFileUrl = async file => {
+        if (!file) {
+            return null;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await uploadFile(formData);
+        if (!res.success) {
+            toast.error(res.error.message);
+            return null;
+        }
+
+        return res.data.url;
+    };
+
+    const createOnclick = async () => {
+        if (serverName == "") {
+            return toast.error("Server name cannot be empty");
+        }
+
+        const logoUrl = await getFileUrl(logoFile);
+        const bannerUrl = await getFileUrl(bannerFile);
+
+        const serverData = {
+            serverName,
+            serverDescription,
+            logoUrl,
+            bannerUrl,
+            template: selectedTemplate
+        };
+
+        const res = await createServer(serverData);
+
+        if (!res.success) {
+            return toast.error(res.error.message);
+        }
+
+        setServers(prev => [...prev, res.data.server]);
+        setCurrentPopUp(PopUpType.CLOSED);
+    };
+
     return (
         <div className="h-full flex w-full flex-col">
-            {!selectedType ? (
+            {!selectedTemplate ? (
                 <>
                     <ServerTemplateSelectItem
                         type={ServerTemplateTypes.NOT_USING}
@@ -55,19 +102,19 @@ function CreateServerPopUp() {
                         create with template
                     </div>
                     <ServerTemplateSelectItem
-                        setSelectedType={setSelectedType}
+                        setSelectedTemplate={setSelectedTemplate}
                         type={ServerTemplateTypes.GAMING}
                     />
                     <ServerTemplateSelectItem
-                        setSelectedType={setSelectedType}
+                        setSelectedTemplate={setSelectedTemplate}
                         type={ServerTemplateTypes.FRIENDS}
                     />
                     <ServerTemplateSelectItem
-                        setSelectedType={setSelectedType}
+                        setSelectedTemplate={setSelectedTemplate}
                         type={ServerTemplateTypes.SCHOOL}
                     />
                     <ServerTemplateSelectItem
-                        setSelectedType={setSelectedType}
+                        setSelectedTemplate={setSelectedTemplate}
                         type={ServerTemplateTypes.WORKING}
                     />
 
@@ -147,7 +194,10 @@ function CreateServerPopUp() {
                             className="bg-[#252525dd] w-full h-18 text-white rounded-lg border-[1px] border-[#ffffff33] focus:border-blue-200 focus:outline-none p-3"
                         />
                     </div>
-                    <div className="bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center">
+                    <div
+                        onClick={createOnclick}
+                        className="bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center"
+                    >
                         Create Server
                     </div>
                 </div>

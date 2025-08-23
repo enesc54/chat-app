@@ -36,8 +36,9 @@ const ChatProvider = ({ children }) => {
     }, [servers, serverId]);
 
     useEffect(() => {
-        if (rooms.length > 0) {
-            setCurrentRoom(rooms.find(item => item._id == roomId));
+        const found = rooms.find(item => item._id == roomId);
+        if (found && found._id !== currentRoom?._id) {
+            setCurrentRoom(found);
         }
     }, [rooms, roomId]);
 
@@ -45,7 +46,6 @@ const ChatProvider = ({ children }) => {
         if (currentServer?._id && currentRoom?._id) {
             navigate(`/chats/${currentServer?._id}/${currentRoom?._id}`);
         }
-
         setShowMobileMenu(false);
     }, [currentRoom]);
 
