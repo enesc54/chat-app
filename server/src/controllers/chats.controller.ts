@@ -412,3 +412,55 @@ export const createServer = async (req: CustomRequest, res: Response) => {
 
     return res.json(response);
 };
+
+export const joinServer = async (req: CustomRequest, res: Response) => {
+    const { serverId } = req.params;
+    const { userId } = req.user;
+
+    const server = await ServerModel.findById(serverId);
+    if (!server) {
+        return res.status(404).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.SERVER_NOT_FOUND,
+                message: ErrorMessages[ErrorCodes.SERVER_NOT_FOUND]
+            }
+        });
+    }
+
+    const role = server.roles.find(r => r.name == "everyone");
+    if (!role || !role?._id) {
+        return res.status(404).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.ROLE_NOT_FOUND,
+                message: ErrorMessages[ErrorCodes.ROLE_NOT_FOUND]
+            }
+        });
+    }
+    const roleId = role._id;
+
+    const alredyMember = server.members.some(
+        (m: IServerMember) => m.userId.toString() == userId
+    );
+    if (alredyMember) {
+        return res.status(400).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.ALREADY_MEMBER,
+                message: ErrorMessages[ErrorCodes.ALREADY_MEMBER]
+            }
+        });
+    }
+
+    server.members.push({ userId, role: roleId } as IServerMember);
+
+    const updatedServer = await server.save();
+
+    const response: IApiResponse<IServer> = {
+        success: true,
+        data: updatedServer
+    };
+
+    res.json(response);
+};

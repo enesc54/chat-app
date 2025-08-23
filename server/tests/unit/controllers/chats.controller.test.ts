@@ -6,17 +6,20 @@ import { Room } from "../../../src/models/room.model";
 import { ErrorCodes, ErrorMessages } from "../../../src/types/response.types";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { verifyToken } from "../../../src/middlewares/auth.middleware";
+import mongoose from "mongoose";
 
 const saveMock = jest.fn().mockResolvedValue({
     _id: "507f1f77bcf86cd799439011",
     name: "Test Server",
     logo: "test-logo-url",
     banner: "test-banner-url",
+    members: [{ userId: "507f1f77bcf86cd799439011" }],
     toObject: () => ({
         _id: "507f1f77bcf86cd799439011",
         name: "Test Server",
         logo: "test-logo-url",
-        banner: "test-banner-url"
+        banner: "test-banner-url",
+        members: [{ userId: "507f1f77bcf86cd799439011" }]
     })
 });
 
@@ -29,7 +32,8 @@ jest.mock("../../../src/models/server.model", () => ({
         jest.fn(() => mockServerInstance),
         {
             find: jest.fn(),
-            findOne: jest.fn()
+            findOne: jest.fn(),
+            findById: jest.fn()
         }
     )
 }));
@@ -184,10 +188,6 @@ describe("create server event", () => {
         });
     });
 
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
     it("should return 400 if template is invalid", async () => {
         const res = await request(app).post("/api/chats/createServer").send({
             template: "invalid_template"
@@ -234,5 +234,69 @@ describe("create server event", () => {
 
         expect(res.status).toBe(200);
         expect(res.body.success).toBe(true);
+    });
+});
+
+describe("join server event", () => {
+    beforeAll(() => {
+        mockedVerifyToken.mockImplementation((req, _res, next) => {
+            req.user = { userId: "507f1f77bcf86cd799439011" };
+            next();
+        });
+    });
+
+    it("should return 404 if server id is invalid", async () => {
+        (ServerModel.findById as jest.Mock).mockResolvedValue(null);
+
+        const res = await request(app).get(
+            "/api/chats/joinServer/invalid-server-id"
+        );
+
+        expect(res.status).toBe(404);
+        expect(res.body.error.code).toBe(ErrorCodes.SERVER_NOT_FOUND);
+    });
+    it("should return 404 if everyone role is not found", async () => {
+        (ServerModel.findById as jest.Mock).mockResolvedValue({ roles: [] });
+
+        const res = await request(app).get(
+            "/api/chats/joinServer/507f1f77bcf86cd799439011"
+        );
+
+        expect(res.status).toBe(404);
+        expect(res.body.error.code).toBe(ErrorCodes.ROLE_NOT_FOUND);
+    });
+    it("should return 400 if user already member of server", async () => {
+        (ServerModel.findById as jest.Mock).mockResolvedValue({
+            roles: [{ _id: "507f1f77bcf86cd799439011", name: "everyone" }],
+            members: [{ userId: "507f1f77bcf86cd799439011" }]
+        });
+
+        const res = await request(app).get(
+            "/api/chats/joinServer/507f1f77bcf86cd799439011"
+        );
+
+        expect(res.status).toBe(400);
+        expect(res.body.error.code).toBe(ErrorCodes.ALREADY_MEMBER);
+    });
+    it("should return updated server if join is successfull", async () => {
+        (ServerModel.findById as jest.Mock).mockResolvedValue({
+            roles: [{ _id: "507f1f77bcf86cd799439011", name: "everyone" }],
+            members: [],
+            save: jest.fn().mockResolvedValue({
+                roles: [
+                    { _id: new mongoose.Types.ObjectId(), name: "everyone" }
+                ],
+                members: [{ userId: "507f1f77bcf86cd799439011" }]
+            })
+        });
+
+        const res = await request(app).get(
+            "/api/chats/joinServer/507f1f77bcf86cd799439011"
+        );
+
+        expect(res.status).toBe(200);
+        expect(res.body.data.members[0].userId).toBe(
+            "507f1f77bcf86cd799439011"
+        );
     });
 });
