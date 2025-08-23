@@ -3,6 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../models/user.model";
 import { sendMail } from "../config/mail";
+import {
+    IApiResponse,
+    ErrorCodes,
+    ErrorMessages,
+    IAuthSuccessResponse
+} from "../types/response.types";
 
 const generateToken = (userId: string, username: string) => {
     if (!process.env.JWT_SECRET) {
@@ -19,7 +25,13 @@ export const register = async (req: Request, res: Response) => {
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: "Email alredy in use" });
+            return res.status(400).json(<IApiResponse>{
+                success: false,
+                error: {
+                    code: ErrorCodes.EMAIL_IN_USE,
+                    message: ErrorMessages[ErrorCodes.EMAIL_IN_USE]
+                }
+            });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,20 +42,34 @@ export const register = async (req: Request, res: Response) => {
             email,
             password: hashedPassword
         });
-        await newUser.save();
+        const savedUser = await newUser.save();
 
-        const token = generateToken(newUser._id.toString(), newUser.username);
+        const token = generateToken(
+            savedUser._id.toString(),
+            savedUser.username
+        );
 
-        return res.status(201).json({
-            user: {
-                userId: newUser._id,
-                username: newUser.username,
-                email: newUser.email
-            },
-            token
-        });
+        const response: IApiResponse<IAuthSuccessResponse> = {
+            success: true,
+            data: {
+                user: {
+                    userId: savedUser._id.toString(),
+                    username: savedUser.username,
+                    email: savedUser.email
+                },
+                token
+            }
+        };
+
+        return res.status(201).json(response);
     } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error });
+        return res.status(500).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.API_ERROR,
+                message: ErrorMessages[ErrorCodes.API_ERROR]
+            }
+        });
     }
 };
 
@@ -52,26 +78,39 @@ export const login = async (req: Request, res: Response) => {
         const { email, password } = req.body;
 
         const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-
-        if (!(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: "Invalid credentials" });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json(<IApiResponse>{
+                success: false,
+                error: {
+                    code: ErrorCodes.INVALID_CREDENTIALS,
+                    message: ErrorMessages[ErrorCodes.USER_NOT_FOUND]
+                }
+            });
         }
 
         const token = generateToken(user._id.toString(), user.username);
 
-        return res.status(201).json({
-            user: {
-                userId: user._id,
-                username: user.username,
-                email: user.email
-            },
-            token
-        });
+        const response: IApiResponse<IAuthSuccessResponse> = {
+            success: true,
+            data: {
+                user: {
+                    userId: user._id.toString(),
+                    username: user.username,
+                    email: user.email
+                },
+                token
+            }
+        };
+
+        return res.status(201).json(response);
     } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error });
+        return res.status(500).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.API_ERROR,
+                message: ErrorMessages[ErrorCodes.API_ERROR]
+            }
+        });
     }
 };
 
@@ -81,7 +120,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json(<IApiResponse>{
+                success: false,
+                error: {
+                    code: ErrorCodes.USER_NOT_FOUND,
+                    message: ErrorMessages[ErrorCodes.USER_NOT_FOUND]
+                }
+            });
         }
 
         if (!process.env.PASSWORD_RESET_SECRET) {
@@ -101,9 +146,20 @@ export const forgotPassword = async (req: Request, res: Response) => {
             email
         );
 
-        return res.status(200).json({ message: "Email sending is succesful" });
+        const response: IApiResponse<{ message: string }> = {
+            success: true,
+            data: { message: "Email sending is succesful" }
+        };
+
+        return res.status(200).json(response);
     } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error });
+        return res.status(500).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.API_ERROR,
+                message: ErrorMessages[ErrorCodes.API_ERROR]
+            }
+        });
     }
 };
 
@@ -134,8 +190,15 @@ export const resetPassword = async (req: Request, res: Response) => {
         }
 
         const user = await User.findById(decoded.userId);
-        if (!user) return res.status(404).json({ message: "User not found" });
-
+        if (!user) {
+            return res.status(404).json(<IApiResponse>{
+                success: false,
+                error: {
+                    code: ErrorCodes.USER_NOT_FOUND,
+                    message: ErrorMessages[ErrorCodes.USER_NOT_FOUND]
+                }
+            });
+        }
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedPassword;
 
@@ -143,15 +206,26 @@ export const resetPassword = async (req: Request, res: Response) => {
 
         const token = generateToken(user._id.toString(), user.username);
 
-        return res.status(201).json({
-            user: {
-                userId: user._id,
-                username: user.username,
-                email: user.email
-            },
-            token
-        });
+        const response: IApiResponse<IAuthSuccessResponse> = {
+            success: true,
+            data: {
+                user: {
+                    userId: user._id.toString(),
+                    username: user.username,
+                    email: user.email
+                },
+                token
+            }
+        };
+
+        return res.status(201).json(response);
     } catch (error) {
-        return res.status(500).json({ message: "Server error", error: error });
+        return res.status(500).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.API_ERROR,
+                message: ErrorMessages[ErrorCodes.API_ERROR]
+            }
+        });
     }
 };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { login } from "../../services/http/authService";
 
 function Login() {
     const [email, setEmail] = useState();
@@ -10,21 +11,17 @@ function Login() {
 
     const loginButtonOnclick = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (res.status === 201) {
-                localStorage.setItem("token", data.token);
-                toast.success("Login successful!");
-                navigate("/chats");
-            } else {
-                toast.error(data.message);
+            const res = await login(email, password);
+
+            if (!res.success) {
+                return toast.error(res.error.message);
             }
+
+            localStorage.setItem("token", res.data.token);
+            toast.success("Login successful!");
+            navigate("/chats");
         } catch (error) {
-            toast.error(error.message);
+            return toast.error(error.message);
         }
     };
     return (

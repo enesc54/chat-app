@@ -24,4 +24,4 @@ const roomSchema = new Schema<IRoom>({
     ]
 });
 
-export const Room = mongoose.model("Room", roomSchema);
+export const Room = mongoose.model<IRoom>("Room", roomSchema);

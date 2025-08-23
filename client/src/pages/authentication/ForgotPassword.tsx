@@ -1,23 +1,21 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { forgotPassword } from "../../services/http/authService";
 
 function ForgotPassword() {
     const [email, setEmail] = useState();
 
     const sendButtonOnclick = async () => {
         try {
-            const res = await fetch(
-                "http://localhost:3000/api/auth/forgot-password",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email })
-                }
-            );
-            const data = await res.json();
-            toast.success(data.message);
+            const res = await forgotPassword(email);
+
+            if (!res.success) {
+                return toast.error(res.error.message);
+            }
+
+            toast.success(res.data.message);
         } catch (error) {
-            toast.error(error.message);
+            return toast.error(error.message);
         }
     };
     return (

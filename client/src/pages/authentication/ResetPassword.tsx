@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { resetPassword } from "../../services/http/authService";
 
 function ResetPassword() {
     const { resetToken } = useParams();
@@ -12,28 +13,20 @@ function ResetPassword() {
     const resetButtonOnclick = async () => {
         try {
             if (password === confirmPassword) {
-                const res = await fetch(
-                    `http://localhost:3000/api/auth/reset-password?resetToken=${resetToken}`,
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ newPassword: password })
-                    }
-                );
-                const data = await res.json();
+                const res = await resetPassword(resetToken, password);
 
-                if (res.status === 201) {
-                    localStorage.setItem("token", data.token);
-                    toast.success("Password reset successful");
-                    navigate("/chats");
-                } else {
-                    toast.error(data.message);
+                if (!res.success) {
+                    return toast.error(res.error.message);
                 }
+
+                localStorage.setItem("token", res.data.token);
+                toast.success("Password reset successful");
+                navigate("/chats");
             } else {
-                toast.error("The passwords entered do not match.");
+                return toast.error("The passwords entered do not match.");
             }
         } catch (error) {
-            toast.error(error.message);
+            return toast.error(error.message);
         }
     };
     return (

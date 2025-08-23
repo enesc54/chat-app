@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { register } from "../../services/http/authService";
 
 function Register() {
     const [fullname, setFullname] = useState();
@@ -12,27 +13,22 @@ function Register() {
 
     const registerButtonOnclick = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    fullname: fullname,
-                    username,
-                    email,
-                    password
-                })
+            const res = await register({
+                fullname: fullname,
+                username,
+                email,
+                password
             });
 
-            const data = await res.json();
-            if (res.status === 201) {
-                localStorage.setItem("token", data.token);
-                toast.success("Registration successful");
-                navigate("/chats");
-            } else {
-                toast.error(data.message);
+            if (!res.success) {
+                return toast.error(res.error.message);
             }
+
+            localStorage.setItem("token", res.data.token);
+            toast.success("Registration successful");
+            navigate("/chats");
         } catch (error) {
-            toast.error(error.message);
+            return toast.error(error.message);
         }
     };
 

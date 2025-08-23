@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { CustomRequest } from "../types/request.types";
+import {
+    IApiResponse,
+    ErrorCodes,
+    ErrorMessages
+} from "../types/response.types";
 
 export const verifyToken = (
     req: Request,
@@ -10,7 +15,13 @@ export const verifyToken = (
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Unauthorized: No tokens" });
+        return res.status(401).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.UNAUTHORIZED,
+                message: ErrorMessages[ErrorCodes.UNAUTHORIZED]
+            }
+        });
     }
 
     const token = authHeader.split(" ")[1];
@@ -29,8 +40,12 @@ export const verifyToken = (
 
         next();
     } catch (err) {
-        return res
-            .status(401)
-            .json({ message: "Unauthorized: Token is invalid." });
+        return res.status(401).json(<IApiResponse>{
+            success: false,
+            error: {
+                code: ErrorCodes.UNAUTHORIZED,
+                message: ErrorMessages[ErrorCodes.UNAUTHORIZED]
+            }
+        });
     }
 };
