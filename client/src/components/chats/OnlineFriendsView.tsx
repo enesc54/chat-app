@@ -20,18 +20,16 @@ function OnlineFriendsView() {
     ]);
 
     return (
-        <div className="flex-1 bg-[#252525dd] h-full rounded-lg p-4 overflow-y-auto scrollbar-hide">
-            <div className="text-white font-bold text-lg my-2">
-                Online Friends
-            </div>
+        <div className="card scrollable flex-1">
+            <div className="font-bold text-md my-2">Online Friends</div>
             {onlineFriends.map(user => {
                 return (
-                    <div className="text-white flex items-center mb-1 p-1 hover:bg-[#25252544] rounded-lg">
+                    <div className="list-item-view text-sm flex items-center gap-2">
                         <img
                             src={user.profilePhoto}
-                            className="w-6 h-6 rounded-lg"
+                            className="w-8 h-8 my-1 rounded-xl"
                         />
-                        <div className="ml-2 text-sm">{user.name}</div>
+                        {user.name}
                     </div>
                 );
             })}

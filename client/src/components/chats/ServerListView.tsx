@@ -6,23 +6,23 @@ import { PopUpType } from "../../layouts/chats";
 import { toast } from "react-toastify";
 
 function ServerListView() {
-    const { servers, currentServer, setCurrentServer,setCurrentPopUp} =
+    const { servers, currentServer, setCurrentServer, setCurrentPopUp } =
         useContext(ChatContext);
-        
-        const joinServerClick = ()=>{
-          setCurrentPopUp(PopUpType.CREATE_SERVER)
-        }
+
+    const joinServerClick = () => {
+        setCurrentPopUp(PopUpType.CREATE_SERVER);
+    };
     return (
         <>
             {/*Servers*/}
-            <div className="flex-1 bg-[#252525dd] overflow-y-auto  h-full rounded-lg pt-6 pb-4 scrollbar-hide">
-                <div className="flex flex-col items-center px-2 ">
+            <div className="card p-4 scrollable h-full">
+                <div className="centered">
                     {servers.map(server => (
                         <img
                             key={server._id}
                             src={server.logo}
                             alt={server.name}
-                            className={`aspect-square object-cover w-full bg-red-400 rounded-lg my-1 hover:scale-110 ${
+                            className={`aspect-square rounded-xl object-cover w-full my-1 hover:scale-110 ${
                                 server._id === currentServer?._id && "scale-110"
                             }`}
                             onClick={() => {
@@ -33,8 +33,11 @@ function ServerListView() {
                 </div>
             </div>
             {/*Add Server Button*/}
-            <div onClick={joinServerClick} className="flex items-center justify-center bg-[#252525dd] mt-2 h-20 rounded-lg">
-                <MdOutlineAddBox className="w-12 h-12 rounded-lg my-1 text-white" />
+            <div
+                onClick={joinServerClick}
+                className="card p-4 centered h-20 mt-2"
+            >
+                <MdOutlineAddBox className="w-16 h-12 hover:scale-110" />
             </div>
         </>
     );

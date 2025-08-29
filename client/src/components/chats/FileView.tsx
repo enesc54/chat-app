@@ -9,7 +9,7 @@ function FileView({ fileId, fileUrl }) {
     useEffect(() => {
         getFileInfo(fileId).then(res => {
             if (!res.success) {
-              toast.error(res.error.message)
+                toast.error(res.error.message);
             }
 
             setFile(res.data);
@@ -36,13 +36,13 @@ function FileView({ fileId, fileUrl }) {
     };
 
     return (
-        <div className="ml-10 h-12 rounded-lg flex gap-2 items-center text-white">
-            <div className="aspect-square h-full rounded-lg bg-blue-100 p-2 text-black">
+        <div className="h-12 flex gap-2 items-center">
+            <div className="aspect-square rounded-xl h-full bg-primary p-2 text-white">
                 <CiFileOn onClick={handleDownload} className="w-full h-full" />
             </div>
             <div>
-                <div>{file.name ?? ""}</div>
-                <div className="text-xs text-gray-500">
+                <div className="text-md">{file.name ?? ""}</div>
+                <div className="text-xs text-text-info">
                     {formatFileSize(file.size)}
                 </div>
             </div>

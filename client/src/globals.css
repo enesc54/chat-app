@@ -1,0 +1,54 @@
+/*light mode*/
+:root {
+    --bg-color: theme(colors.background.light);
+    --bg-color-opacity: theme(colors.background.lightOpacity);
+    --bg-hover: theme(colors.background.lightHover);
+    --bg-selected: theme(colors.background.lightSelected);
+    --main-text-color: theme(colors.text.light);
+    --placeholder-color: theme(colors.text.placeholder.light);
+    --border-color: theme(colors.border.light);
+}
+
+/*dark mode*/
+.dark {
+    --bg-color: theme(colors.background.dark);
+    --bg-color-opacity: theme(colors.background.darkOpacity);
+    --bg-hover: theme(colors.background.darkHover);
+    --bg-selected: theme(colors.background.darkSelected);
+    --main-text-color: theme(colors.text.dark);
+    --placeholder-color: theme(colors.text.placeholder.dark);
+    --border-color: theme(colors.border.dark);
+}
+
+/*utility classes*/
+.card {
+    @apply p-8 rounded-xl backdrop-blur-md shadow-2xl;
+    background-color: var(--bg-color-opacity);
+    color: var(--main-text-color);
+}
+
+.auth-card {
+    @apply flex flex-col items-center justify-center w-4/5 sm:w-2/3 md:w-2/3 lg:w-1/2;
+}
+
+.scrollable {
+    @apply overflow-y-auto scrollbar-hide;
+}
+
+.list-item-view {
+    padding: theme(spacing.1);
+    padding-left: theme(spacing.2);
+    border-radius: theme(borderRadius.xl);
+}
+
+.list-item-view:hover {
+    background-color: var(--bg-hover);
+}
+
+.list-item-selected {
+    background-color: var(--bg-selected);
+}
+
+.gradient-to-top {
+    background: linear-gradient(to top, var(--bg-color), #0000);
+}

@@ -33,23 +33,22 @@ function ChatPageLayout() {
                 return null;
         }
     };
-
     return (
         <div>
-            <div className="flex h-dvh w-full bg-[url('/login_background.jpg')]">
+            <div className="bg-main bg-cover flex h-dvh w-full gap-2 p-2 lg:p-4">
                 <LeftMenu />
                 <Outlet />
-                <aside className="lg:flex flex-col w-[20%] pl-1 pr-2 py-2 hidden">
+                <aside className="hidden lg:flex flex-col w-[20%]">
                     <OnlineFriendsView />
                     <QuickSettingsView />
                 </aside>
             </div>
             <div
-                className={`absolute flex h-dvh w-full top-0 left-0 bg-[#050505aa] items-center justify-center text-white ${
+                className={`absolute flex h-dvh w-full top-0 left-0 bg-background-overlay items-center justify-center text-white ${
                     currentPopUp === PopUpType.CLOSED ? "hidden" : ""
                 }`}
             >
-                <div className="max-w-[95%] lg:max-w-[80%] min-w-[80%] lg:min-w-[30%] max-h-[80%] bg-[#252525dd] rounded-xl p-4 overflow-auto flex justify-center">
+                <div className="max-w-[95%] lg:max-w-[80%] min-w-[80%] lg:min-w-[30%] max-h-[80%] bg-[var(--bg-color-opacity)] backdrop-blur-md rounded-xl p-4 overflow-auto flex justify-center">
                     {currentPopUp !== PopUpType.CLOSED && getPopUpView()}
                 </div>
             </div>

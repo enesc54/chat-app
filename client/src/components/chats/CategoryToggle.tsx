@@ -12,18 +12,18 @@ function CategoryToggle({ categoryData }) {
     const categoryRooms = categoryData.rooms;
 
     return (
-        <div className="text-white mb-2">
+        <div className="my-1">
             <div
                 onClick={() => {
                     setIsVisible(!isVisible);
                 }}
-                className="flex w-full justify-between items-center "
+                className="flex w-full justify-between items-center"
             >
-                <div className="font-bold text-sm">{categoryData.name}</div>
+                <div className="font-bold text-md">{categoryData.name}</div>
                 {isVisible ? (
-                    <MdOutlineKeyboardArrowDown className="h-full w-6" />
+                    <MdOutlineKeyboardArrowDown className="h-full w-8" />
                 ) : (
-                    <MdOutlineKeyboardArrowRight className="h-full w-6" />
+                    <MdOutlineKeyboardArrowRight className="h-full w-8" />
                 )}
             </div>
             {isVisible && (

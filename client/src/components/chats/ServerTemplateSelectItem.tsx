@@ -41,7 +41,7 @@ function ServerTemplateSelectItem({ type, setSelectedTemplate }) {
     return (
         <div
             onClick={handleClick}
-            className="h-24 bg-[#252525] flex items-center shadow-lg p-8 rounded-xl gap-8 text-2xl font-bold mb-6"
+            className="h-24 bg-[var(--bg-color)] hover:scale-95 text-[var(--main-text-color)] flex items-center shadow-xl p-8 rounded-xl gap-8 text-2xl font-bold mb-4"
         >
             {options[type].icon}
             {options[type].text}

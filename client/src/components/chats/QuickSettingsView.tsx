@@ -4,15 +4,18 @@ import { MdOutlineSettings } from "react-icons/md";
 
 function QuickSettingsView() {
     return (
-        <div className="bg-[#252525dd] mt-2 h-20 rounded-lg flex items-center justify-around p-4">
+        <div className="card p-4 mt-2 h-20 flex items-center justify-around">
             {/*User Profile*/}
-            <img src="/login_background.jpg" className="w-10 h-10 rounded-lg" />
+            <img
+                src="https://xjgddaylqjdcmvkzzeaj.supabase.co/storage/v1/object/public/files/app_main_background.jpg"
+                className="w-12 h-12 hover:scale-110 rounded-xl"
+            />
             {/*Microphone Control*/}
-            <BiMicrophone className="w-10 h-10 my-1 text-white" />
+            <BiMicrophone className="w-12 h-12 hover:scale-110" />
             {/*Headphone Control*/}
-            <TbHeadphones className="w-10 h-10 my-1 text-white" />
+            <TbHeadphones className="w-12 h-12 hover:scale-110" />
             {/*Settings*/}
-            <MdOutlineSettings className="w-10 h-10 my-1 text-white" />
+            <MdOutlineSettings className="w-12 h-12 hover:scale-110" />
         </div>
     );
 }

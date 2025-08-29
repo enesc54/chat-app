@@ -5,15 +5,19 @@ function ServerBannerView() {
     const { currentServer } = useContext(ChatContext);
 
     return (
-        <div className="bg-[#252525dd] flex flex-col mb-2 h-52 rounded-lg">
+        <div className="card p-0 h-64 flex flex-col mb-2">
             <div
-                className={`w-full h-full rounded-lg bg-cover bg-center`}
-                style={{ backgroundImage: `url(${currentServer.banner})` }}
+                className={`w-full h-full bg-center bg-cover rounded-xl`}
+                style={{ backgroundImage: `url(${currentServer.banner} )` }}
             >
-                <div className="w-full h-full rounded-lg bg-gradient-to-t from-[#252525ff] to-[#25252500] flex items-end p-6 text-white">
+                <div
+                    className={`w-full h-full rounded-xl ${
+                        currentServer.banner && "gradient-to-top"
+                    } flex items-end p-6`}
+                >
                     <img
                         src={currentServer.logo}
-                        className="w-8 h-8 rounded-lg object-cover"
+                        className="aspect-square rounded-xl w-12 object-cover"
                     />
                     <div className="ml-2">{currentServer.name}</div>
                 </div>

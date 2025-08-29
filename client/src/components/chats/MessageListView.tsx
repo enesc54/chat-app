@@ -34,10 +34,7 @@ function MessageListView() {
         }
     }, [messages]);
     return (
-        <div
-            ref={messageListRef}
-            className="bg-[#252525dd] overflow-y-auto scrollbar-hide max-h-full flex-1 rounded-lg py-4 px-6"
-        >
+        <div ref={messageListRef} className="card scrollable flex-1">
             <div className="flex flex-col min-h-full justify-end">
                 {messages.map(message => {
                     return <MessageView message={message} />;

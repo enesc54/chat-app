@@ -27,7 +27,7 @@ function Chats() {
 
     return (
         <main
-            className={`sm:flex flex-col flex-1 px-1 py-2 ${
+            className={`lg:flex flex-col flex-1 gap-2 ${
                 !showMobileMenu ? "flex" : "hidden"
             }`}
         >

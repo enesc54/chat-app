@@ -98,9 +98,7 @@ function CreateServerPopUp() {
                     <ServerTemplateSelectItem
                         type={ServerTemplateTypes.NOT_USING}
                     />
-                    <div className="text-gray-500 m-4">
-                        create with template
-                    </div>
+                    <div className="m-4">create with template</div>
                     <ServerTemplateSelectItem
                         setSelectedTemplate={setSelectedTemplate}
                         type={ServerTemplateTypes.GAMING}
@@ -122,7 +120,7 @@ function CreateServerPopUp() {
                         onClick={() => {
                             setCurrentPopUp(PopUpType.JOIN_SERVER);
                         }}
-                        className="shrink-0 bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center"
+                        className="shrink-0 bg-primary hover:bg-primary-hover rounded-xl p-4 flex items-center mt-4 justify-center"
                     >
                         Bir Server'a Katıl
                     </div>
@@ -132,7 +130,7 @@ function CreateServerPopUp() {
                     <div className="flex w-full gap-4 mb-4">
                         <div
                             onClick={logoUploadClick}
-                            className="flex flex-col gap-2 items-center justify-center rounded-lg text-xs text-gray-300 aspect-square h-32 bg-[#252525] shadow-lg overflow-hidden"
+                            className="flex flex-col gap-2 items-center justify-center rounded-xl text-xs aspect-square h-32 bg-[var(--bg-color)] hover:scale-95 text-[var(--main-text-color)] shadow-xl overflow-hidden"
                         >
                             {!logoFile ? (
                                 <>
@@ -155,7 +153,7 @@ function CreateServerPopUp() {
                         </div>
                         <div
                             onClick={bannerUploadClick}
-                            className="flex flex-col gap-2 items-center justify-center rounded-lg text-xs text-gray-300 aspect-video h-32 bg-[#252525] shadow-lg overflow-hidden"
+                            className="flex flex-col gap-2 items-center justify-center rounded-xl text-xs aspect-video h-32 bg-[var(--bg-color)] hover:scale-95 text-[var(--main-text-color)] shadow-xl overflow-hidden"
                         >
                             {!bannerFile ? (
                                 <>
@@ -184,19 +182,19 @@ function CreateServerPopUp() {
                             onChange={e => {
                                 setServerName(e.target.value);
                             }}
-                            className="bg-[#252525dd] w-full h-12 text-white rounded-lg border-[1px] border-[#ffffff33] focus:border-blue-200 focus:outline-none p-3"
+                            className="bg-[var(--bg-color-opacity)] text-[var(--main-text-color)] w-full h-12 rounded-xl border border-[var(--border-color)] focus:border-primary focus:outline-none px-4"
                         />
                         <textarea
                             placeholder="Server Description"
                             onChange={e => {
                                 setServerDescription(e.target.value);
                             }}
-                            className="bg-[#252525dd] w-full h-18 text-white rounded-lg border-[1px] border-[#ffffff33] focus:border-blue-200 focus:outline-none p-3"
+                            className="bg-[var(--bg-color-opacity)] text-[var(--main-text-color)] w-full h-20 rounded-xl border border-[var(--border-color)] focus:border-primary focus:outline-none p-4"
                         />
                     </div>
                     <div
                         onClick={createOnclick}
-                        className="bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center"
+                        className="bg-primary hover:bg-primary-hover rounded-xl p-4 flex items-center mt-4 justify-center"
                     >
                         Create Server
                     </div>

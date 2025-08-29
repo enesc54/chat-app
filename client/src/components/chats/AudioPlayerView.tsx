@@ -59,8 +59,8 @@ function AudioPlayerView({ fileId, fileUrl }) {
     };
 
     return (
-        <div className="ml-10 w-36 h-12 rounded-lg flex gap-2 items-center text-white">
-            <div className="aspect-square h-full rounded-lg bg-blue-100 p-2 text-black">
+        <div className="h-12 flex gap-2 items-center">
+            <div className="aspect-square rounded-xl h-full bg-primary p-2 text-white">
                 <LuAudioLines className="w-full h-full" />
             </div>
             <audio
@@ -72,12 +72,12 @@ function AudioPlayerView({ fileId, fileUrl }) {
             />
             <div className="flex gap-2 items-center">
                 {isPlaying ? (
-                    <FaPause onClick={togglePlay} className="w-6 h-6" />
+                    <FaPause onClick={togglePlay} className="w-8 h-8" />
                 ) : (
-                    <FaPlay onClick={togglePlay} className="w-6 h-6" />
+                    <FaPlay onClick={togglePlay} className="w-8 h-8" />
                 )}
                 <div
-                    className="h-1 w-24 bg-gray-600 rounded"
+                    className="h-1 w-32 bg-background-progressBar rounded-xl"
                     ref={progressBarRef}
                     onClick={handleProgressBarClick}
                 >
@@ -85,10 +85,10 @@ function AudioPlayerView({ fileId, fileUrl }) {
                         style={{
                             width: `${(currentTime / duration) * 100}%`
                         }}
-                        className="h-full rounded bg-white"
+                        className="h-full rounded-xl bg-white"
                     ></div>
                 </div>
-                <div className="text-xs text-gray-500">{`${formatTime(
+                <div className="text-sm text-text-info">{`${formatTime(
                     currentTime
                 )}/${formatTime(duration)}`}</div>
             </div>

@@ -8,17 +8,21 @@ function LeftMenu() {
     const { showMobileMenu } = useContext(ChatContext);
 
     return (
-        <>
+        <div
+            className={`lg:flex gap-2 w-full lg:w-[25%] ${
+                showMobileMenu ? "flex" : "hidden"
+            }`}
+        >
             <aside
-                className={`sm:flex flex-col lg:w-[6%] sm:w-[10%] pl-2 pr-1 py-2  ${
-                    showMobileMenu ? "flex w-[18%]" : "hidden"
+                className={`lg:flex flex-col w-1/5 ${
+                    showMobileMenu ? "flex" : "hidden"
                 }`}
             >
                 {/*Server List*/}
                 <ServerListView />
             </aside>
             <aside
-                className={`sm:flex flex-col lg:w-[18%] sm:w-[30%] px-1 py-2 ${
+                className={`lg:flex flex-col w-4/5 ${
                     showMobileMenu ? "flex w-[82%]" : "hidden"
                 }`}
             >
@@ -27,7 +31,7 @@ function LeftMenu() {
                 {/*Room List*/}
                 <RoomListView />
             </aside>
-        </>
+        </div>
     );
 }
 

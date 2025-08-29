@@ -9,15 +9,15 @@ function ToggleItem({ roomData }) {
         useContext(ChatContext);
     return (
         <div
-            className={`flex items-center py-0.5 px-2 hover:bg-[#25252544] rounded-lg ${
-                roomData._id === currentRoom?._id ? "bg-[#25252544]" : ""
+            className={`list-item-view flex items-center gap-2 ${
+                roomData._id === currentRoom?._id ? "list-item-selected" : ""
             }`}
             onClick={() => {
                 setCurrentRoom(roomData);
             }}
         >
             {roomData.type === "text" ? <HiHashtag /> : <MdOutlineVolumeUp />}
-            <div className="ml-2 ">{roomData.name}</div>
+{roomData.name}
         </div>
     );
 }

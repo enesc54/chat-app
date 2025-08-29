@@ -34,7 +34,7 @@ function RoomListView() {
     }, [currentServer, categories]);
 
     return (
-        <div className="bg-[#252525dd] h-full rounded-lg p-6 overflow-y-auto scrollbar-hide">
+        <div className="card scrollable h-full">
             {roomsGroupedByCategories.map(category => (
                 <CategoryToggle categoryData={category} />
             ))}

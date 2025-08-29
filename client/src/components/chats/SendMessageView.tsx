@@ -28,21 +28,22 @@ function SendMessageView() {
     };
 
     return (
-        <div className="bg-[#252525dd] mt-2 h-20 rounded-lg p-4 flex items-center">
+        <div className="card p-4 h-20 flex items-center gap-2">
             <MdOutlineAddBox
-                className="w-12 h-12 my-1 text-white"
+                className="w-16 h-12 hover:scale-110"
                 onClick={() => {
                     setCurrentPopUp(PopUpType.FILE_SEND);
                 }}
             />
-            <textarea
+            <input
+                type="text"
                 value={message}
                 onChange={handleChange}
-                className="mx-2 bg-[#252525dd] w-full h-full text-white rounded-lg border-[1px] border-[#ffffff33] focus:border-blue-200 focus:outline-none p-3 scrollbar-hide resize-none"
+                className="bg-[var(--bg-color-opacity)] text-[var(--main-tet-color)] w-full h-full rounded-xl border border-[var(--border-color)] focus:border-primary focus:outline-none px-4 scrollbar-hide"
             />
             <IoSend
                 onClick={handleSubmit}
-                className="w-12 h-12 my-1 text-white"
+                className="w-16 h-12 hover:scale-110"
             />
         </div>
     );

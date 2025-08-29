@@ -35,11 +35,11 @@ function JoinServerPopUp() {
                 onChange={e => {
                     setInviteUrl(e.target.value);
                 }}
-                className="bg-[#252525dd] w-full h-12 text-white rounded-lg border-[1px] border-[#ffffff33] focus:border-blue-200 focus:outline-none p-3"
+                className="bg-[var(--bg-color-opacity)] w-full h-12 rounded-xl border border-[var(--border-color)] text-[var(--main-text-color)] focus:border-primary focus:outline-none p-4"
             />
             <div
                 onClick={joinClick}
-                className="bg-[#007BFFdd] hover:bg-[#0056b3dd] rounded-lg p-4 flex items-center mt-4 justify-center"
+                className="bg-primary hover:bg-primary-hover rounded-xl p-4 flex items-center mt-4 justify-center"
             >
                 Join Server
             </div>

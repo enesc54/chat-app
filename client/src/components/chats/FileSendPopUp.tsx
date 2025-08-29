@@ -13,7 +13,7 @@ import { uploadFile } from "../../services/http/fileService";
 import { sendMessage } from "../../services/socket/chatSocket";
 
 function FileSendPopUp() {
-    const { currentRoom , setCurrentPopUp} = useContext(ChatContext);
+    const { currentRoom, setCurrentPopUp } = useContext(ChatContext);
 
     const [isFileSelected, setIsFileSelected] = useState(false);
     const [selectedFile, setSelectedFile] = useState();
@@ -33,14 +33,14 @@ function FileSendPopUp() {
             data: res.data.url,
             fileId: res.data._id
         };
-        
-        sendMessage(currentRoom._id,messageContent,(response)=>{
-          if (!response.success) {
-            return toast.error(response.error.message);
-        }
-        
-        setCurrentPopUp(PopUpType.CLOSED)
-        })
+
+        sendMessage(currentRoom._id, messageContent, response => {
+            if (!response.success) {
+                return toast.error(response.error.message);
+            }
+
+            setCurrentPopUp(PopUpType.CLOSED);
+        });
     };
 
     useEffect(() => {
@@ -51,7 +51,7 @@ function FileSendPopUp() {
 
     return (
         <div
-            className={`w-full flex items-center justify-center  ${
+            className={`w-full flex items-center justify-center ${
                 isFileSelected
                     ? "flex flex-col gap-12 items-center justify-center"
                     : "grid grid-cols-2 lg:grid-cols-3"
@@ -59,13 +59,13 @@ function FileSendPopUp() {
         >
             {isFileSelected ? (
                 <>
-                    <div className="flex flex-col h-64 lg:h-72 gap-8 items-center justify-center bg-[#252525] shadow-lg aspect-[3/2] rounded-xl">
+                    <div className="flex flex-col h-64 lg:h-72 gap-8 p-8 items-center justify-center bg-[var(--bg-color)] text-[var(--main-text-color)] shadow-xl aspect-[3/2] rounded-xl">
                         <FiUpload className="w-16 h-16" />
                         File Name:{selectedFile.name}
                     </div>
                     <div
                         onClick={handleSendClick}
-                        className="flex gap-4 items-center text-xl bg-[#007BFFdd] hover:bg-[#0056b3dd] p-4 rounded-lg"
+                        className="flex gap-4 items-center text-xl bg-primary hover:bg-primary-hover p-4 rounded-xl"
                     >
                         Send <IoSend />
                     </div>

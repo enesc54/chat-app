@@ -55,12 +55,12 @@ const FileTypeSelectItem = ({ type, setSelectedFile, setSelectedFileType }) => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
             setSelectedFile(selectedFile);
-            setSelectedFileType(type)
+            setSelectedFileType(type);
         }
     };
     return (
         <div
-            className="flex gap-4 items-center pl-8 bg-[#252525] shadow-lg aspect-[3/2] rounded-xl"
+            className="flex gap-4 items-center p-8 bg-[var(--bg-color)] hover:scale-95 shadow-xl aspect-[3/2] rounded-xl"
             onClick={handleClick}
         >
             <input
@@ -79,7 +79,9 @@ const FileTypeSelectItem = ({ type, setSelectedFile, setSelectedFileType }) => {
             >
                 {options[type].icon}
             </div>
-            {options[type].text}
+            <div className="text-xl text-[var(--main-text-color)]">
+                {options[type].text}
+            </div>
         </div>
     );
 };
